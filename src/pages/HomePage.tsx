@@ -102,6 +102,11 @@ export default function HomePage() {
       return;
     }
     sessionStorage.setItem("analysisResult", JSON.stringify(result));
+    if (filters) {
+      sessionStorage.setItem("analysisFilters", JSON.stringify(filters));
+    } else {
+      sessionStorage.removeItem("analysisFilters");
+    }
     const parsed = new URL(url);
     const parts = parsed.pathname.split("/").filter(Boolean);
     navigate(`/analyze?owner=${parts[0]}&repo=${parts[1]}`);
@@ -123,6 +128,11 @@ export default function HomePage() {
       return;
     }
     sessionStorage.setItem("analysisResult", JSON.stringify(result));
+    if (filters) {
+      sessionStorage.setItem("analysisFilters", JSON.stringify(filters));
+    } else {
+      sessionStorage.removeItem("analysisFilters");
+    }
     const parsed = new URL(url);
     const parts = parsed.pathname.split("/").filter(Boolean);
     navigate(`/analyze?owner=${parts[0]}&repo=${parts[1]}`);

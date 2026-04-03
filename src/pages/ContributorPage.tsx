@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { fetchContributorProfile } from "@/lib/api";
-import { CommitDetail, ContributorProfile } from "@/lib/types";
+import { AnalysisFilters, CommitDetail, ContributorProfile } from "@/lib/types";
 import { timeAgo } from "@/lib/timeAgo";
 import ErrorBanner from "@/components/ErrorBanner";
 
@@ -62,9 +62,22 @@ export default function ContributorPage() {
   const [sort, setSort] = useState<SortOption>("newest");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [copiedSha, setCopiedSha] = useState<string | null>(null);
+  const activeFilters = useMemo(() => {
+    const raw = sessionStorage.getItem("analysisFilters");
+    if (!raw) return undefined;
+    try {
+      return JSON.parse(raw) as AnalysisFilters;
+    } catch {
+      return undefined;
+    }
+  }, []);
+  const filterCacheKey = useMemo(
+    () => (activeFilters ? JSON.stringify(activeFilters) : "nofilter"),
+    [activeFilters],
+  );
   const cacheKey = useMemo(
-    () => `contributorProfile:${repoUrl}:${login}`,
-    [repoUrl, login],
+    () => `contributorProfile:${repoUrl}:${login}:${filterCacheKey}`,
+    [repoUrl, login, filterCacheKey],
   );
 
   useEffect(() => {
@@ -91,7 +104,11 @@ export default function ContributorPage() {
       setLoading(true);
       setError(null);
 
-      const result = await fetchContributorProfile(repoUrl, login);
+      const result = await fetchContributorProfile(
+        repoUrl,
+        login,
+        activeFilters,
+      );
       if (cancelled) return;
 
       if (!result.success) {
@@ -109,7 +126,7 @@ export default function ContributorPage() {
     return () => {
       cancelled = true;
     };
-  }, [cacheKey, login, repoUrl]);
+  }, [activeFilters, cacheKey, login, repoUrl]);
 
   const filteredCommits = useMemo(() => {
     if (!profile) return [];
