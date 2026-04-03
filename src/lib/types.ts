@@ -134,8 +134,12 @@ export interface ContributorProfile {
 
 export interface GeneratedDocs {
   readme: string;
-  architectureDoc: string;
-  systemFlowDoc: string;
+}
+
+export interface IngestDigest {
+  summary: string;
+  tree: string;
+  content: string;
 }
 
 export interface ErrorResponse {

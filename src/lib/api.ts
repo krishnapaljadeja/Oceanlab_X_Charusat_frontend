@@ -8,6 +8,7 @@ import {
   AnalysisFilters,
   ContributorProfile,
   GeneratedDocs,
+  IngestDigest,
 } from "./types";
 import { supabase } from "./supabase";
 
@@ -220,6 +221,65 @@ export async function generateDocs(
       error:
         axiosErr.response?.data?.error ||
         "Could not generate docs. Please try again.",
+    };
+  }
+}
+
+export async function fetchIngestDigest(
+  repoUrl: string,
+  options?: {
+    includePatterns?: string[];
+    excludePatterns?: string[];
+    maxFileSize?: number;
+  },
+): Promise<
+  { success: true; digest: IngestDigest } | { success: false; error: string }
+> {
+  try {
+    const headers = await buildAuthHeaders();
+    const response = await axios.post<{ success: true; digest: IngestDigest }>(
+      `${BACKEND_URL}/api/ingest/fetch`,
+      { repoUrl, options },
+      { timeout: 180000, headers },
+    );
+    return response.data;
+  } catch (err) {
+    const axiosErr = err as AxiosError<{ error?: string }>;
+    return {
+      success: false,
+      error:
+        axiosErr.response?.data?.error ||
+        "Could not ingest repository content. Please try again.",
+    };
+  }
+}
+
+export async function generateIngestReadme(
+  repoUrl: string,
+  digest?: IngestDigest,
+): Promise<
+  | { success: true; readme: string; digest: IngestDigest }
+  | { success: false; error: string }
+> {
+  try {
+    const headers = await buildAuthHeaders();
+    const response = await axios.post<{
+      success: true;
+      readme: string;
+      digest: IngestDigest;
+    }>(
+      `${BACKEND_URL}/api/ingest/readme`,
+      { repoUrl, digest },
+      { timeout: 180000, headers },
+    );
+    return response.data;
+  } catch (err) {
+    const axiosErr = err as AxiosError<{ error?: string }>;
+    return {
+      success: false,
+      error:
+        axiosErr.response?.data?.error ||
+        "Could not generate README. Please try again.",
     };
   }
 }

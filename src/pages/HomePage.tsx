@@ -6,6 +6,7 @@ import { analyzeRepo } from "@/lib/api";
 import LoadingState from "@/components/LoadingState";
 import ErrorBanner from "@/components/ErrorBanner";
 import RepoInput from "@/components/RepoInput";
+import AppNavbar from "@/components/AppNavbar";
 import { useAuth } from "@/context/AuthContext";
 import { AnalysisFilters } from "@/lib/types";
 
@@ -30,7 +31,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -145,40 +146,9 @@ export default function HomePage() {
   return (
     <main
       ref={heroRef}
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4"
+      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4 pt-24 pb-8"
     >
-      {/* Top-right login link */}
-      <div className="absolute top-5 right-6 z-20">
-        <button
-          onClick={async () => {
-            if (!session) {
-              navigate("/login");
-              return;
-            }
-
-            await signOut();
-            navigate("/login", { replace: true });
-          }}
-          className="flex items-center gap-2 text-sm transition-opacity hover:opacity-80"
-          style={{ color: "#666", fontFamily: "'DM Sans', sans-serif" }}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 16V8" />
-            <path d="m8 12 4-4 4 4" />
-          </svg>
-          <span>{session ? "Logout" : "Login"}</span>
-        </button>
-      </div>
+      <AppNavbar />
 
       {/* Floating background icons */}
       {FLOAT_ICONS.map((icon, i) => (
@@ -200,7 +170,7 @@ export default function HomePage() {
       ))}
 
       {/* Hero content */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto">
+      <div className="relative z-10 text-center max-w-4xl mx-auto mt-8 sm:mt-10">
         {/* Eyebrow label */}
         <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border-2 border-[#2a2a2a] bg-[#1a1a1a]">
           <span className="w-2 h-2 rounded-full bg-[#6BCB77] animate-pulse" />
@@ -249,10 +219,10 @@ export default function HomePage() {
 
         {/* History shortcut */}
         <p
-          className="mt-6 text-sm"
+          className="mt-6 text-sm flex gap-3 justify-center items-center"
           style={{ color: "#444", fontFamily: "'DM Sans', sans-serif" }}
         >
-          Analyzed before?{" "}
+          <span>Analyzed before?</span>
           <button
             onClick={() => navigate("/history")}
             className="transition-colors hover:opacity-80"

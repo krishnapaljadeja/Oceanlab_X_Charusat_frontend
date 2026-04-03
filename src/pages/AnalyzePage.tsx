@@ -9,6 +9,7 @@ import {
   Clock,
   Users,
   Heart,
+  FileText,
   FileDown,
   Loader2,
   History,
@@ -25,7 +26,6 @@ import HealthScore from "@/components/HealthScore";
 import FreshnessBanner from "@/components/FreshnessBanner";
 import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
-import DocExportSection from "@/components/DocExportSection";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
@@ -161,6 +161,15 @@ export default function AnalyzePage() {
           >
             <History size={14} />
             <span className="hidden sm:inline">View History</span>
+          </button>
+          <span style={{ color: "#333", fontSize: "0.7rem" }}>|</span>
+          <button
+            onClick={() => navigate("/ingest")}
+            className="flex items-center gap-1.5 text-sm transition-colors hover:opacity-80"
+            style={{ color: "#4CC9F0", fontFamily: "'DM Sans', sans-serif" }}
+          >
+            <FileText size={14} />
+            <span className="hidden sm:inline">Ingest</span>
           </button>
         </div>
 
@@ -396,8 +405,6 @@ export default function AnalyzePage() {
         <section id="section-health" className="scroll-mt-20">
           <HealthScore summary={summary} />
         </section>
-
-        <DocExportSection repoUrl={`https://github.com/${repoMeta.fullName}`} />
 
         {/* Analyze another repo */}
         <div className="text-center py-10">

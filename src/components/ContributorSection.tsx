@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -39,6 +39,7 @@ export default function ContributorSection({
 }: ContributorSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLElement[]>([]);
+  const [loadingLogin, setLoadingLogin] = useState<string | null>(null);
 
   useGSAP(
     () => {
@@ -132,6 +133,7 @@ export default function ContributorSection({
             <Link
               key={contributor.login}
               to={`/contributor/${encodeURIComponent(contributor.login)}?repo=${encodeURIComponent(repoUrl)}`}
+              onClick={() => setLoadingLogin(contributor.login)}
               ref={(el) => {
                 if (el) cardRefs.current[i] = el;
               }}
@@ -256,7 +258,9 @@ export default function ContributorSection({
                   fontFamily: "'DM Sans', sans-serif",
                 }}
               >
-                View details →
+                {loadingLogin === contributor.login
+                  ? "Loading details..."
+                  : "View details →"}
               </span>
             </Link>
           );

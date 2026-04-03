@@ -62,6 +62,10 @@ export default function ContributorPage() {
   const [sort, setSort] = useState<SortOption>("newest");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [copiedSha, setCopiedSha] = useState<string | null>(null);
+  const cacheKey = useMemo(
+    () => `contributorProfile:${repoUrl}:${login}`,
+    [repoUrl, login],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +75,17 @@ export default function ContributorPage() {
         setError("Missing contributor or repository details.");
         setLoading(false);
         return;
+      }
+
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          setProfile(JSON.parse(cached) as ContributorProfile);
+          setLoading(false);
+          return;
+        } catch {
+          sessionStorage.removeItem(cacheKey);
+        }
       }
 
       setLoading(true);
@@ -86,6 +101,7 @@ export default function ContributorPage() {
       }
 
       setProfile(result.profile);
+      sessionStorage.setItem(cacheKey, JSON.stringify(result.profile));
       setLoading(false);
     }
 
@@ -93,7 +109,7 @@ export default function ContributorPage() {
     return () => {
       cancelled = true;
     };
-  }, [login, repoUrl]);
+  }, [cacheKey, login, repoUrl]);
 
   const filteredCommits = useMemo(() => {
     if (!profile) return [];
@@ -234,7 +250,7 @@ export default function ContributorPage() {
               />
               <StatChip
                 label="Impact Score"
-                value={`${profile.overallImpactScore.toFixed(1)} pts`}
+                value={`${profile.overallImpactScore.toFixed(1)}/100`}
               />
               <StatChip
                 label="Peak Activity"
@@ -380,7 +396,7 @@ export default function ContributorPage() {
                         {commit.impactLabel}
                       </span>
                       <span className="text-xs" style={{ color: "#a0a0a0" }}>
-                        {commit.impactScore.toFixed(1)} pts
+                        {commit.impactScore.toFixed(1)}/100
                       </span>
                     </div>
                   </div>
