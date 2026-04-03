@@ -26,6 +26,7 @@ import FreshnessBanner from "@/components/FreshnessBanner";
 import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
 import { useAuth } from "@/context/AuthContext";
+import { ContinuousPagination } from "@/components/ui/continuous-pagination";
 
 const NAV_ITEMS = [
   { id: "story", label: "STORY", icon: BookOpen },
@@ -38,6 +39,7 @@ const NAV_ITEMS = [
 export default function AnalyzePage() {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [activeSection, setActiveSection] = useState("story");
+  const [chapterPage, setChapterPage] = useState(1);
   const [exporting, setExporting] = useState(false);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -89,6 +91,10 @@ export default function AnalyzePage() {
     }
   }, [loading, navigate, session]);
 
+  useEffect(() => {
+    setChapterPage(1);
+  }, [result?.narrative.narrativeChapters.length]);
+
   // Track active section on scroll
   useEffect(() => {
     if (!result) return;
@@ -130,6 +136,14 @@ export default function AnalyzePage() {
   }
 
   const { repoMeta, summary, narrative } = result;
+  const chaptersPerPage = 10;
+  const totalChapters = narrative.narrativeChapters.length;
+  const totalChapterPages = Math.max(1, Math.ceil(totalChapters / chaptersPerPage));
+  const startChapterIndex = (chapterPage - 1) * chaptersPerPage;
+  const currentChapterBatch = narrative.narrativeChapters.slice(
+    startChapterIndex,
+    startChapterIndex + chaptersPerPage,
+  );
 
   return (
     <div className="min-h-screen" style={{ background: "#0f0f0f" }}>
@@ -281,11 +295,32 @@ export default function AnalyzePage() {
           {/* Narrative chapters */}
           <div
             className="py-4 px-2"
-            style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "2rem",
+              overflowAnchor: "none",
+            }}
           >
-            {narrative.narrativeChapters.map((chapter, i) => (
-              <NarrativeChapter key={i} chapter={chapter} index={i} />
+            {currentChapterBatch.map((chapter, localIndex) => (
+              <NarrativeChapter
+                key={`${chapterPage}-${localIndex}`}
+                chapter={chapter}
+                index={startChapterIndex + localIndex}
+              />
             ))}
+
+            {totalChapterPages > 1 && (
+              <div className="pt-2">
+                <ContinuousPagination
+                  totalPages={totalChapterPages}
+                  currentPage={chapterPage}
+                  defaultPage={chapterPage}
+                  maxVisiblePages={10}
+                  onPageChange={setChapterPage}
+                />
+              </div>
+            )}
           </div>
 
           {/* Architectural observations */}
