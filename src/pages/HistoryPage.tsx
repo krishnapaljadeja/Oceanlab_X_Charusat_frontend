@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchHistory, analyzeRepo } from "@/lib/api";
 import { HistoryItem } from "@/lib/types";
 import HistoryCard from "@/components/HistoryCard";
+import { useAuth } from "@/context/AuthContext";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -10,14 +11,21 @@ export default function HistoryPage() {
   const [viewingRepo, setViewingRepo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { session, loading } = useAuth();
 
   useEffect(() => {
+    if (loading) return;
+    if (!session) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
     setIsLoading(true);
     fetchHistory().then((result) => {
       setHistory(result);
       setIsLoading(false);
     });
-  }, []);
+  }, [loading, navigate, session]);
 
   const onView = async (item: HistoryItem) => {
     const key = `${item.owner}/${item.repo}`;
@@ -71,20 +79,21 @@ export default function HistoryPage() {
         </span>
 
         {/* Right: count badge */}
-        {!isLoading && history.length > 0 && (
-          <span
-            className="text-xs px-2.5 py-1 rounded-full"
-            style={{
-              background: "rgba(255,217,61,0.1)",
-              border: "1px solid rgba(255,217,61,0.25)",
-              color: "#FFD93D",
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            {history.length} repo{history.length === 1 ? "" : "s"}
-          </span>
-        )}
-        {(isLoading || history.length === 0) && <div className="w-16" />}
+        <div className="flex items-center gap-3">
+          {!isLoading && history.length > 0 && (
+            <span
+              className="text-xs px-2.5 py-1 rounded-full"
+              style={{
+                background: "rgba(255,217,61,0.1)",
+                border: "1px solid rgba(255,217,61,0.25)",
+                color: "#FFD93D",
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              {history.length} repo{history.length === 1 ? "" : "s"}
+            </span>
+          )}
+        </div>
       </header>
 
       {/* ==================== MAIN ==================== */}

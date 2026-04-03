@@ -25,6 +25,7 @@ import HealthScore from "@/components/HealthScore";
 import FreshnessBanner from "@/components/FreshnessBanner";
 import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
   { id: "story", label: "STORY", icon: BookOpen },
@@ -40,6 +41,7 @@ export default function AnalyzePage() {
   const [exporting, setExporting] = useState(false);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { session, loading } = useAuth();
 
   const handleRefresh = () => {
     if (!result) return;
@@ -69,6 +71,12 @@ export default function AnalyzePage() {
   };
 
   useEffect(() => {
+    if (loading) return;
+    if (!session) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
     const stored = sessionStorage.getItem("analysisResult");
     if (!stored) {
       navigate("/");
@@ -79,7 +87,7 @@ export default function AnalyzePage() {
     } catch {
       navigate("/");
     }
-  }, [navigate]);
+  }, [loading, navigate, session]);
 
   // Track active section on scroll
   useEffect(() => {
@@ -127,7 +135,7 @@ export default function AnalyzePage() {
     <div className="min-h-screen" style={{ background: "#0f0f0f" }}>
       {/* ==================== TOP NAV BAR ==================== */}
       <header
-        className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between gap-4 relative"
+        className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between gap-4"
         style={{
           background: "rgba(15,15,15,0.95)",
           borderBottom: "1px solid #2a2a2a",
