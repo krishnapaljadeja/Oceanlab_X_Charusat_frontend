@@ -13,12 +13,17 @@ const ACCENT_COLORS = ["#4CC9F0", "#FF6B9D", "#6BCB77", "#FFD93D", "#FF8C42"];
 export default function MilestoneList({ milestones }: MilestoneListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
+  const isScrollable = milestones.length > 6;
 
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
       itemRefs.current.forEach((el, i) => {
         if (!el) return;
+        if (isScrollable) {
+          gsap.set(el, { opacity: 1, x: 0, scale: 1 });
+          return;
+        }
         gsap.fromTo(
           el,
           { opacity: 0, x: 40, scale: 0.96 },
@@ -61,7 +66,12 @@ export default function MilestoneList({ milestones }: MilestoneListProps) {
       >
         MILESTONE HIGHLIGHTS
       </h2>
-      <div className="space-y-3">
+      <div
+        className={
+          isScrollable ? "space-y-3 pr-2 overflow-y-auto" : "space-y-3"
+        }
+        style={isScrollable ? { maxHeight: 640 } : undefined}
+      >
         {milestones.map((m, i) => {
           const color = ACCENT_COLORS[i % ACCENT_COLORS.length];
           return (

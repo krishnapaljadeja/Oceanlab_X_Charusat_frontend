@@ -24,12 +24,17 @@ const ACCENT_COLORS = ["#FFD93D", "#4CC9F0", "#FF6B9D", "#6BCB77", "#FF8C42"];
 export default function Timeline({ milestones }: TimelineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
+  const isScrollable = milestones.length > 6;
 
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
       itemRefs.current.forEach((el, i) => {
         if (!el) return;
+        if (isScrollable) {
+          gsap.set(el, { opacity: 1, x: 0, y: 0 });
+          return;
+        }
         const fromLeft = i % 2 === 0;
         gsap.fromTo(
           el,
@@ -73,7 +78,10 @@ export default function Timeline({ milestones }: TimelineProps) {
         DEVELOPMENT TIMELINE
       </h2>
 
-      <div className="relative">
+      <div
+        className={isScrollable ? "relative pr-2 overflow-y-auto" : "relative"}
+        style={isScrollable ? { maxHeight: 640 } : undefined}
+      >
         {/* Dashed center line */}
         <div
           className="absolute left-5 top-0 bottom-0"

@@ -17,11 +17,6 @@ export default function HistoryCard({
   isRefreshing,
   isViewing = false,
 }: HistoryCardProps) {
-  const truncatedDesc =
-    item.description && item.description.length > 100
-      ? item.description.slice(0, 100) + "…"
-      : item.description;
-
   const busy = isViewing || isRefreshing;
 
   return (
@@ -65,16 +60,6 @@ export default function HistoryCard({
           </span>
         )}
       </div>
-
-      {/* Description */}
-      {truncatedDesc && (
-        <p
-          className="text-sm leading-relaxed"
-          style={{ color: "#888", fontFamily: "'DM Sans', sans-serif" }}
-        >
-          {truncatedDesc}
-        </p>
-      )}
 
       {/* Stats row */}
       <div

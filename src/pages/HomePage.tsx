@@ -192,7 +192,7 @@ export default function HomePage() {
         {/* Main heading */}
         <h1
           ref={headingRef}
-          className="font-bebas text-[80px] sm:text-[96px] lg:text-[120px] leading-none text-white mb-4"
+          className="font-bebas text-[64px] sm:text-[84px] lg:text-[112px] leading-[0.92] text-white mb-8"
           style={{
             fontFamily: "'Bebas Neue', cursive",
             letterSpacing: "0.03em",
@@ -206,7 +206,7 @@ export default function HomePage() {
         {/* Subheading */}
         <p
           ref={subRef}
-          className="text-lg sm:text-xl text-gray-400 max-w-xl mx-auto mb-12 leading-relaxed"
+          className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           Enter a public GitHub repository URL and watch its entire development
