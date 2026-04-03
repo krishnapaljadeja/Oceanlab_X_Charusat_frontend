@@ -2,11 +2,18 @@ import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Search } from "lucide-react";
+import AnalysisFilters from "@/components/AnalysisFilters";
+import { AnalysisFilters as AnalysisFiltersType } from "@/lib/types";
 
 interface RepoInputProps {
-  onAnalyze: (url: string) => void;
+  onAnalyze: (url: string, filters: AnalysisFiltersType) => void;
   isLoading: boolean;
 }
+
+const DEFAULT_FILTERS: AnalysisFiltersType = {
+  dateRange: { type: "all" },
+  excludeMergeCommits: true,
+};
 
 const EXAMPLE_REPOS = [
   { label: "expressjs/express", url: "https://github.com/expressjs/express" },
@@ -19,6 +26,8 @@ const EXAMPLE_REPOS = [
 
 export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
   const [url, setUrl] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<AnalysisFiltersType>(DEFAULT_FILTERS);
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const { contextSafe } = useGSAP();
@@ -71,7 +80,7 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
     const trimmed = url.trim();
     if (!trimmed) return;
     handleBtnClick();
-    onAnalyze(trimmed);
+    onAnalyze(trimmed, filters);
   };
 
   return (
@@ -134,6 +143,19 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
 
       {/* Example repos */}
       <div className="mt-4 flex flex-wrap gap-2 items-center">
+        <button
+          type="button"
+          onClick={() => setShowFilters((prev) => !prev)}
+          className="text-xs px-3 py-1.5 rounded-full transition-all hover:-translate-y-0.5"
+          style={{
+            background: "#1a1a1a",
+            border: "1.5px solid #4CC9F0",
+            color: "#4CC9F0",
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        >
+          {showFilters ? "Hide filters" : "Show filters"}
+        </button>
         <span className="text-xs text-gray-600 uppercase tracking-widest">
           Try:
         </span>
@@ -142,7 +164,7 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
             key={example.url}
             onClick={() => {
               setUrl(example.url);
-              onAnalyze(example.url);
+              onAnalyze(example.url, filters);
             }}
             disabled={isLoading}
             className="text-xs px-3 py-1.5 rounded-full disabled:opacity-50 transition-all hover:-translate-y-0.5"
@@ -165,6 +187,10 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
           </button>
         ))}
       </div>
+
+      {showFilters && (
+        <AnalysisFilters filters={filters} onChange={setFilters} />
+      )}
     </div>
   );
 }

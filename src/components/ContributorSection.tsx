@@ -1,13 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { NormalizedContributor } from "@/lib/types";
 import { toParas } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface ContributorSectionProps {
   contributors: NormalizedContributor[];
   insights: string;
+  repoUrl: string;
 }
 
 const CARD_COLORS = [
@@ -33,9 +35,11 @@ function getInitials(login: string) {
 export default function ContributorSection({
   contributors,
   insights,
+  repoUrl,
 }: ContributorSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<HTMLDivElement[]>([]);
+  const cardRefs = useRef<HTMLElement[]>([]);
+  const [loadingLogin, setLoadingLogin] = useState<string | null>(null);
 
   useGSAP(
     () => {
@@ -126,12 +130,14 @@ export default function ContributorSection({
           );
 
           return (
-            <div
+            <Link
               key={contributor.login}
+              to={`/contributor/${encodeURIComponent(contributor.login)}?repo=${encodeURIComponent(repoUrl)}`}
+              onClick={() => setLoadingLogin(contributor.login)}
               ref={(el) => {
                 if (el) cardRefs.current[i] = el;
               }}
-              className="rounded-xl p-4 relative flex flex-col gap-3"
+              className="rounded-xl p-4 relative flex flex-col gap-3 group cursor-pointer transition-transform hover:-translate-y-1"
               style={{
                 background: isTop
                   ? "linear-gradient(135deg, rgba(255,217,61,0.12), #1a1a1a)"
@@ -141,6 +147,7 @@ export default function ContributorSection({
                   ? `4px 4px 0 rgba(255,217,61,0.3)`
                   : `4px 4px 0 rgba(0,0,0,0.4)`,
                 opacity: 0,
+                textDecoration: "none",
               }}
             >
               {/* Crown for top contributor */}
@@ -243,7 +250,19 @@ export default function ContributorSection({
                   ))}
                 </div>
               )}
-            </div>
+
+              <span
+                className="text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  color: "#4CC9F0",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                {loadingLogin === contributor.login
+                  ? "Loading details..."
+                  : "View details →"}
+              </span>
+            </Link>
           );
         })}
       </div>

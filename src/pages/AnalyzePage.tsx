@@ -9,6 +9,7 @@ import {
   Clock,
   Users,
   Heart,
+  FileText,
   FileDown,
   Loader2,
   History,
@@ -174,6 +175,15 @@ export default function AnalyzePage() {
           >
             <History size={14} />
             <span className="hidden sm:inline">View History</span>
+          </button>
+          <span style={{ color: "#333", fontSize: "0.7rem" }}>|</span>
+          <button
+            onClick={() => navigate("/ingest")}
+            className="flex items-center gap-1.5 text-sm transition-colors hover:opacity-80"
+            style={{ color: "#4CC9F0", fontFamily: "'DM Sans', sans-serif" }}
+          >
+            <FileText size={14} />
+            <span className="hidden sm:inline">Ingest</span>
           </button>
         </div>
 
@@ -416,6 +426,7 @@ export default function AnalyzePage() {
           <ContributorSection
             contributors={summary.topContributors}
             insights={narrative.contributorInsights}
+            repoUrl={`https://github.com/${repoMeta.fullName}`}
           />
         </section>
 
