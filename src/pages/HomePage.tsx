@@ -6,6 +6,7 @@ import { analyzeRepo } from "@/lib/api";
 import LoadingState from "@/components/LoadingState";
 import ErrorBanner from "@/components/ErrorBanner";
 import RepoInput from "@/components/RepoInput";
+import { useAuth } from "@/context/AuthContext";
 
 // Floating background icons (git-themed)
 const FLOAT_ICONS = [
@@ -28,6 +29,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { session, signOut } = useAuth();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -84,6 +86,11 @@ export default function HomePage() {
   );
 
   const handleAnalyze = async (url: string) => {
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     const result = await analyzeRepo(url);
@@ -99,6 +106,11 @@ export default function HomePage() {
   };
 
   const handleForceRefresh = async (url: string) => {
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     const { refreshRepo } = await import("@/lib/api");
@@ -134,10 +146,18 @@ export default function HomePage() {
       ref={heroRef}
       className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4"
     >
-      {/* Top-right history link */}
+      {/* Top-right login link */}
       <div className="absolute top-5 right-6 z-20">
         <button
-          onClick={() => navigate("/history")}
+          onClick={async () => {
+            if (!session) {
+              navigate("/login");
+              return;
+            }
+
+            await signOut();
+            navigate("/login", { replace: true });
+          }}
           className="flex items-center gap-2 text-sm transition-opacity hover:opacity-80"
           style={{ color: "#666", fontFamily: "'DM Sans', sans-serif" }}
         >
@@ -152,9 +172,10 @@ export default function HomePage() {
             strokeLinejoin="round"
           >
             <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
+            <path d="M12 16V8" />
+            <path d="m8 12 4-4 4 4" />
           </svg>
-          <span>History</span>
+          <span>{session ? "Logout" : "Login"}</span>
         </button>
       </div>
 

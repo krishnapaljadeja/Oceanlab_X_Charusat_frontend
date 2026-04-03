@@ -1,15 +1,34 @@
 /// <reference types="vite/client" />
 import axios, { AxiosError } from "axios";
 import { ApiResponse, HistoryItem, QAMessage, HeatmapData } from "./types";
+import { supabase } from "./supabase";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
+async function buildAuthHeaders(): Promise<Record<string, string>> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    return {};
+  }
+
+  return {
+    Authorization: `Bearer ${session.access_token}`,
+  };
+}
+
 export async function analyzeRepo(repoUrl: string): Promise<ApiResponse> {
   try {
+    const headers = await buildAuthHeaders();
     const response = await axios.post<ApiResponse>(
       `${BACKEND_URL}/api/analyze`,
       { repoUrl },
-      { timeout: 300000 }, // 5 min timeout — large repos (e.g. keploy) can take 3+ min
+      {
+        timeout: 300000,
+        headers,
+      }, // 5 min timeout — large repos (e.g. keploy) can take 3+ min
     );
     return response.data;
   } catch (err) {
@@ -38,10 +57,11 @@ export async function analyzeRepo(repoUrl: string): Promise<ApiResponse> {
 
 export async function refreshRepo(repoUrl: string): Promise<ApiResponse> {
   try {
+    const headers = await buildAuthHeaders();
     const response = await axios.post<ApiResponse>(
       `${BACKEND_URL}/api/analyze/refresh`,
       { repoUrl },
-      { timeout: 300000 },
+      { timeout: 300000, headers },
     );
     return response.data;
   } catch (err) {
@@ -70,8 +90,10 @@ export async function refreshRepo(repoUrl: string): Promise<ApiResponse> {
 
 export async function fetchHistory(): Promise<HistoryItem[]> {
   try {
+    const headers = await buildAuthHeaders();
     const response = await axios.get<{ success: true; history: HistoryItem[] }>(
       `${BACKEND_URL}/api/history`,
+      { headers },
     );
     return response.data.history;
   } catch {
@@ -122,9 +144,10 @@ export async function fetchHeatmap(
   repo: string,
 ): Promise<HeatmapData | null> {
   try {
+    const headers = await buildAuthHeaders();
     const response = await axios.get<HeatmapData & { success: true }>(
       `${BACKEND_URL}/api/heatmap/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
-      { timeout: 10000 },
+      { timeout: 10000, headers },
     );
     const { success: _success, ...data } = response.data;
     return data;
