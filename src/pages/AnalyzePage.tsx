@@ -28,6 +28,7 @@ import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
 import { useAuth } from "@/context/AuthContext";
 import { ContinuousPagination } from "@/components/ui/continuous-pagination";
+import { refreshRepo } from "@/lib/api";
 
 const NAV_ITEMS = [
   { id: "story", label: "STORY", icon: BookOpen },
@@ -42,13 +43,28 @@ export default function AnalyzePage() {
   const [activeSection, setActiveSection] = useState("story");
   const [chapterPage, setChapterPage] = useState(1);
   const [exporting, setExporting] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const { session, loading } = useAuth();
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     if (!result) return;
-    navigate(`/?repo=${result.repoMeta.fullName}&force=true`);
+
+    setIsRefreshing(true);
+    try {
+      const repoUrl =
+        result.repoMeta.htmlUrl ||
+        `https://github.com/${result.repoMeta.fullName}`;
+      const refreshed = await refreshRepo(repoUrl);
+      if (refreshed.success) {
+        sessionStorage.setItem("analysisResult", JSON.stringify(refreshed));
+        setResult(refreshed);
+        setChapterPage(1);
+      }
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleExportPdf = async () => {
@@ -269,7 +285,7 @@ export default function AnalyzePage() {
             staleness={result.staleness}
             repoUrl={`https://github.com/${result.repoMeta.fullName}`}
             onRefresh={handleRefresh}
-            isRefreshing={false}
+            isRefreshing={isRefreshing}
           />
         )}
 
