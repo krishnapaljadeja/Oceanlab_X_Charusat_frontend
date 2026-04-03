@@ -6,14 +6,37 @@ import AnalysisFilters from "@/components/AnalysisFilters";
 import { AnalysisFilters as AnalysisFiltersType } from "@/lib/types";
 
 interface RepoInputProps {
-  onAnalyze: (url: string, filters: AnalysisFiltersType) => void;
+  onAnalyze: (url: string, filters?: AnalysisFiltersType) => void;
   isLoading: boolean;
 }
 
 const DEFAULT_FILTERS: AnalysisFiltersType = {
   dateRange: { type: "all" },
-  excludeMergeCommits: true,
+  excludeMergeCommits: false,
 };
+
+function getEffectiveFilters(
+  filters: AnalysisFiltersType,
+): AnalysisFiltersType | undefined {
+  const hasDateFilter = filters.dateRange.type !== "all";
+  const hasMergeFilter = filters.excludeMergeCommits;
+  const hasBranchFilter = Boolean(filters.branchFilter?.trim());
+  const hasPathFilter = Boolean(filters.pathFilter?.trim());
+  const hasMinLinesFilter =
+    typeof filters.minLinesChanged === "number" && filters.minLinesChanged > 0;
+
+  if (
+    !hasDateFilter &&
+    !hasMergeFilter &&
+    !hasBranchFilter &&
+    !hasPathFilter &&
+    !hasMinLinesFilter
+  ) {
+    return undefined;
+  }
+
+  return filters;
+}
 
 const EXAMPLE_REPOS = [
   { label: "expressjs/express", url: "https://github.com/expressjs/express" },
@@ -80,7 +103,7 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
     const trimmed = url.trim();
     if (!trimmed) return;
     handleBtnClick();
-    onAnalyze(trimmed, filters);
+    onAnalyze(trimmed, getEffectiveFilters(filters));
   };
 
   return (
@@ -164,7 +187,7 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
             key={example.url}
             onClick={() => {
               setUrl(example.url);
-              onAnalyze(example.url, filters);
+              onAnalyze(example.url, getEffectiveFilters(filters));
             }}
             disabled={isLoading}
             className="text-xs px-3 py-1.5 rounded-full disabled:opacity-50 transition-all hover:-translate-y-0.5"

@@ -18,7 +18,7 @@ const RANGE_OPTIONS: Array<{
 
 const DEFAULT_FILTERS: AnalysisFiltersType = {
   dateRange: { type: "all" },
-  excludeMergeCommits: true,
+  excludeMergeCommits: false,
 };
 
 function getSelectedRangeId(

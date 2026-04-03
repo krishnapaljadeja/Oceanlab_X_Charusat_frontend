@@ -137,9 +137,12 @@ export default function AnalyzePage() {
   }
 
   const { repoMeta, summary, narrative } = result;
-  const chaptersPerPage = 10;
+  const chaptersPerPage = 6;
   const totalChapters = narrative.narrativeChapters.length;
-  const totalChapterPages = Math.max(1, Math.ceil(totalChapters / chaptersPerPage));
+  const totalChapterPages = Math.max(
+    1,
+    Math.ceil(totalChapters / chaptersPerPage),
+  );
   const startChapterIndex = (chapterPage - 1) * chaptersPerPage;
   const currentChapterBatch = narrative.narrativeChapters.slice(
     startChapterIndex,
