@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0f0f0f;
+  --foreground: #f0f0f0;
+  --accent-yellow: #ffd93d;
+  --accent-pink: #ff6b9d;
+  --accent-green: #6bcb77;
+  --accent-cyan: #4cc9f0;
+  --accent-orange: #ff8c42;
+  --bg-card: #1a1a1a;
+  --border: #2a2a2a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0f0f0f;
+  color: #f0f0f0;
+  font-family: "DM Sans", sans-serif;
+  min-height: 100vh;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.font-bebas {
+  font-family: "Bebas Neue", cursive;
+  letter-spacing: 0.05em;
+}
+
+.font-dmsans {
+  font-family: "DM Sans", sans-serif;
+}
+
+/* Chunky card style */
+.card-sticker {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.06);
+}
+
+/* Chunky button style */
+.btn-chunky {
+  position: relative;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+.btn-chunky:hover {
+  box-shadow: 6px 6px 0px #000;
+  transform: translate(-1px, -1px);
+}
+.btn-chunky:active {
+  box-shadow: 1px 1px 0px #000;
+  transform: translate(2px, 2px);
+}
+
+/* Warning stripes */
+.warning-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffd93d,
+    #ffd93d 10px,
+    #000 10px,
+    #000 20px
+  );
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ffd93d;
+}
