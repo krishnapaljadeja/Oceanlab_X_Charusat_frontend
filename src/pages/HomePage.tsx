@@ -7,6 +7,7 @@ import LoadingState from "@/components/LoadingState";
 import ErrorBanner from "@/components/ErrorBanner";
 import RepoInput from "@/components/RepoInput";
 import { useAuth } from "@/context/AuthContext";
+import { AnalysisFilters } from "@/lib/types";
 
 // Floating background icons (git-themed)
 const FLOAT_ICONS = [
@@ -85,7 +86,7 @@ export default function HomePage() {
     { scope: heroRef },
   );
 
-  const handleAnalyze = async (url: string) => {
+  const handleAnalyze = async (url: string, filters?: AnalysisFilters) => {
     if (!session) {
       navigate("/login");
       return;
@@ -93,7 +94,7 @@ export default function HomePage() {
 
     setIsLoading(true);
     setError(null);
-    const result = await analyzeRepo(url);
+    const result = await analyzeRepo(url, filters);
     if (!result.success) {
       setError(result.error);
       setIsLoading(false);
@@ -105,7 +106,7 @@ export default function HomePage() {
     navigate(`/analyze?owner=${parts[0]}&repo=${parts[1]}`);
   };
 
-  const handleForceRefresh = async (url: string) => {
+  const handleForceRefresh = async (url: string, filters?: AnalysisFilters) => {
     if (!session) {
       navigate("/login");
       return;
@@ -114,7 +115,7 @@ export default function HomePage() {
     setIsLoading(true);
     setError(null);
     const { refreshRepo } = await import("@/lib/api");
-    const result = await refreshRepo(url);
+    const result = await refreshRepo(url, filters);
     if (!result.success) {
       setError(result.error);
       setIsLoading(false);

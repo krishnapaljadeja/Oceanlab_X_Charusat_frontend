@@ -25,6 +25,7 @@ import HealthScore from "@/components/HealthScore";
 import FreshnessBanner from "@/components/FreshnessBanner";
 import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
+import DocExportSection from "@/components/DocExportSection";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
@@ -381,6 +382,7 @@ export default function AnalyzePage() {
           <ContributorSection
             contributors={summary.topContributors}
             insights={narrative.contributorInsights}
+            repoUrl={`https://github.com/${repoMeta.fullName}`}
           />
         </section>
 
@@ -394,6 +396,8 @@ export default function AnalyzePage() {
         <section id="section-health" className="scroll-mt-20">
           <HealthScore summary={summary} />
         </section>
+
+        <DocExportSection repoUrl={`https://github.com/${repoMeta.fullName}`} />
 
         {/* Analyze another repo */}
         <div className="text-center py-10">

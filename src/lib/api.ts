@@ -1,6 +1,14 @@
 /// <reference types="vite/client" />
 import axios, { AxiosError } from "axios";
-import { ApiResponse, HistoryItem, QAMessage, HeatmapData } from "./types";
+import {
+  ApiResponse,
+  HistoryItem,
+  QAMessage,
+  HeatmapData,
+  AnalysisFilters,
+  ContributorProfile,
+  GeneratedDocs,
+} from "./types";
 import { supabase } from "./supabase";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
@@ -19,12 +27,15 @@ async function buildAuthHeaders(): Promise<Record<string, string>> {
   };
 }
 
-export async function analyzeRepo(repoUrl: string): Promise<ApiResponse> {
+export async function analyzeRepo(
+  repoUrl: string,
+  filters?: AnalysisFilters,
+): Promise<ApiResponse> {
   try {
     const headers = await buildAuthHeaders();
     const response = await axios.post<ApiResponse>(
       `${BACKEND_URL}/api/analyze`,
-      { repoUrl },
+      { repoUrl, filters },
       {
         timeout: 300000,
         headers,
@@ -55,12 +66,15 @@ export async function analyzeRepo(repoUrl: string): Promise<ApiResponse> {
   }
 }
 
-export async function refreshRepo(repoUrl: string): Promise<ApiResponse> {
+export async function refreshRepo(
+  repoUrl: string,
+  filters?: AnalysisFilters,
+): Promise<ApiResponse> {
   try {
     const headers = await buildAuthHeaders();
     const response = await axios.post<ApiResponse>(
       `${BACKEND_URL}/api/analyze/refresh`,
-      { repoUrl },
+      { repoUrl, filters },
       { timeout: 300000, headers },
     );
     return response.data;
@@ -153,5 +167,59 @@ export async function fetchHeatmap(
     return data;
   } catch {
     return null;
+  }
+}
+
+export async function fetchContributorProfile(
+  repoUrl: string,
+  login: string,
+  filters?: AnalysisFilters,
+): Promise<
+  | { success: true; profile: ContributorProfile }
+  | { success: false; error: string }
+> {
+  try {
+    const headers = await buildAuthHeaders();
+    const response = await axios.post<{
+      success: true;
+      profile: ContributorProfile;
+    }>(
+      `${BACKEND_URL}/api/contributors/profile`,
+      { repoUrl, login, filters },
+      { timeout: 120000, headers },
+    );
+    return response.data;
+  } catch (err) {
+    const axiosErr = err as AxiosError<{ error?: string }>;
+    return {
+      success: false,
+      error:
+        axiosErr.response?.data?.error ||
+        "Could not load contributor profile. Please try again.",
+    };
+  }
+}
+
+export async function generateDocs(
+  repoUrl: string,
+): Promise<
+  { success: true; docs: GeneratedDocs } | { success: false; error: string }
+> {
+  try {
+    const headers = await buildAuthHeaders();
+    const response = await axios.post<{ success: true; docs: GeneratedDocs }>(
+      `${BACKEND_URL}/api/docs/generate`,
+      { repoUrl },
+      { timeout: 180000, headers },
+    );
+    return response.data;
+  } catch (err) {
+    const axiosErr = err as AxiosError<{ error?: string }>;
+    return {
+      success: false,
+      error:
+        axiosErr.response?.data?.error ||
+        "Could not generate docs. Please try again.",
+    };
   }
 }
