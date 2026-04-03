@@ -126,6 +126,7 @@ export async function askQuestion(
   | { success: false; error: string }
 > {
   try {
+    const headers = await buildAuthHeaders();
     const response = await axios.post<{
       success: true;
       answer: string;
@@ -133,7 +134,7 @@ export async function askQuestion(
     }>(
       `${BACKEND_URL}/api/qa`,
       { owner, repo, question, history: history.slice(-5) },
-      { timeout: 30000 },
+      { timeout: 30000, headers },
     );
     return response.data;
   } catch (err) {
