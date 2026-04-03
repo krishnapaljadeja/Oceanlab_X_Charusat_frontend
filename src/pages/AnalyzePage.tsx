@@ -190,7 +190,7 @@ export default function AnalyzePage() {
 
       {/* ==================== TOP NAV BAR ==================== */}
       <header
-        className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between gap-4"
+        className="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between gap-4"
         style={{
           background: "rgba(15,15,15,0.95)",
           borderBottom: "1px solid #2a2a2a",
@@ -278,7 +278,7 @@ export default function AnalyzePage() {
       {/* ==================== MAIN CONTENT ==================== */}
       <main
         ref={containerRef}
-        className="relative z-10 max-w-5xl mx-auto px-4 py-8 space-y-8 sm:space-y-10"
+        className="relative z-10 max-w-5xl mx-auto px-4 pt-24 pb-8 space-y-8 sm:space-y-10"
       >
         {/* Freshness banner */}
         {result.staleness && (

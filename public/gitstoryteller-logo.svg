@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg">
+<style>
+  .book-cover { fill: #1a1f2e; stroke: #2d3550; stroke-width: 1.5; }
+  .book-spine { fill: #141826; stroke: #2d3550; stroke-width: 1; }
+  .page { fill: #f5f0e8; }
+  .page-line { stroke: #c8bfaa; stroke-width: 0.8; fill: none; opacity: 0.6; }
+  .branch-line-g { stroke: #4ade80; stroke-width: 2; fill: none; stroke-linecap: round; }
+  .branch-line-b { stroke: #60a5fa; stroke-width: 2; fill: none; stroke-linecap: round; }
+  .wordmark { font-family: Georgia, 'Times New Roman', serif; font-size: 38px; font-weight: 700; fill: #f0ece4; }
+  .wordmark-accent { fill: #4ade80; }
+  .tagline { font-family: Georgia, 'Times New Roman', serif; font-size: 12px; fill: #8892a4; letter-spacing: 2.5px; font-style: italic; }
+</style>
+
+<!-- Book shadow -->
+<rect x="12" y="10" width="120" height="145" rx="4" fill="#000" opacity="0.2"/>
+
+<!-- Book back cover -->
+<rect x="8" y="6" width="120" height="144" rx="5" class="book-cover"/>
+
+<!-- Book spine -->
+<rect x="8" y="6" width="14" height="144" rx="3" class="book-spine"/>
+<line x1="19" y1="10" x2="19" y2="146" stroke="#3a4060" stroke-width="0.5"/>
+
+<!-- Pages -->
+<rect x="22" y="8" width="106" height="142" rx="2" fill="#e0d8c8"/>
+<rect x="23" y="7" width="106" height="142" rx="2" fill="#ede6d6"/>
+<rect x="24" y="6" width="106" height="142" rx="2" class="page"/>
+
+<!-- Page lines -->
+<line x1="34" y1="26" x2="118" y2="26" class="page-line"/>
+<line x1="34" y1="38" x2="118" y2="38" class="page-line"/>
+<line x1="34" y1="50" x2="118" y2="50" class="page-line"/>
+<line x1="34" y1="62" x2="114" y2="62" class="page-line"/>
+<line x1="34" y1="74" x2="118" y2="74" class="page-line"/>
+<line x1="34" y1="86" x2="112" y2="86" class="page-line"/>
+<line x1="34" y1="98" x2="118" y2="98" class="page-line"/>
+<line x1="34" y1="110" x2="114" y2="110" class="page-line"/>
+<line x1="34" y1="122" x2="118" y2="122" class="page-line"/>
+<line x1="34" y1="134" x2="112" y2="134" class="page-line"/>
+
+<!-- Git graph — main branch (green) -->
+<line x1="46" y1="18" x2="46" y2="145" class="branch-line-g"/>
+<circle cx="46" cy="26" r="4" fill="#4ade80"/>
+<circle cx="46" cy="48" r="4" fill="#4ade80"/>
+<circle cx="46" cy="86" r="4" fill="#4ade80"/>
+<circle cx="46" cy="122" r="4" fill="#4ade80"/>
+<circle cx="46" cy="140" r="4" fill="#4ade80"/>
+
+<!-- Feature branch (blue) -->
+<path d="M46 48 C60 48 60 56 60 62" stroke="#60a5fa" stroke-width="2" fill="none" stroke-linecap="round"/>
+<line x1="60" y1="62" x2="60" y2="80" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+<path d="M60 80 C60 88 53 86 46 86" stroke="#60a5fa" stroke-width="2" fill="none" stroke-linecap="round"/>
+<circle cx="60" cy="68" r="3.5" fill="#60a5fa"/>
+<circle cx="60" cy="78" r="3.5" fill="#60a5fa"/>
+
+<!-- Merge ring -->
+<circle cx="46" cy="86" r="6" fill="none" stroke="#a78bfa" stroke-width="1.5" opacity="0.9"/>
+
+<!-- Hotfix branch (pink) -->
+<path d="M46 86 C74 86 74 96 74 100" stroke="#f472b6" stroke-width="2" fill="none" stroke-linecap="round"/>
+<line x1="74" y1="100" x2="74" y2="112" stroke="#f472b6" stroke-width="2" stroke-linecap="round"/>
+<path d="M74 112 C74 122 60 122 46 122" stroke="#f472b6" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+<circle cx="74" cy="106" r="3.5" fill="#f472b6"/>
+
+<!-- Quill pen -->
+<path d="M88 8 C108 0 122 8 126 20 C116 15 104 16 94 28 C104 20 114 24 114 36 C104 28 92 30 84 44 C86 30 84 18 88 8Z" fill="#ede8dd" stroke="#c8bfaa" stroke-width="0.5"/>
+<path d="M84 44 L78 64 L81 64 L78 78 L84 62 L87 65Z" fill="#1a1a2e"/>
+<circle cx="78.5" cy="78" r="2" fill="#1a1a2e"/>
+
+<!-- Ink dot sparkles -->
+<circle cx="96" cy="4" r="1.5" fill="#4ade80" opacity="0.7"/>
+<circle cx="108" cy="2" r="1" fill="#60a5fa" opacity="0.6"/>
+<circle cx="8" cy="4" r="1" fill="#f472b6" opacity="0.5"/>
+
+<!-- Wordmark -->
+<text x="148" y="80" class="wordmark">Git<tspan class="wordmark-accent">Story</tspan>teller</text>
+
+<!-- Divider -->
+<line x1="148" y1="96" x2="460" y2="96" stroke="#2d3550" stroke-width="1"/>
+
+<!-- Tagline -->
+<text x="148" y="116" class="tagline">every commit has a story</text>
+
+<!-- Small git dots beside tagline -->
+<circle cx="150" cy="130" r="2.5" fill="#4ade80" opacity="0.7"/>
+<line x1="150" y1="133" x2="150" y2="142" stroke="#4ade80" stroke-width="1.5" opacity="0.5"/>
+<path d="M150 138 C158 138 160 134 160 130" stroke="#60a5fa" stroke-width="1.5" fill="none" opacity="0.5"/>
+<circle cx="160" cy="130" r="2" fill="#60a5fa" opacity="0.7"/>
+</svg>

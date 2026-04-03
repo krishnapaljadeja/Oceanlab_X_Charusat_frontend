@@ -10,6 +10,7 @@ import AppNavbar from "@/components/AppNavbar";
 import { useAuth } from "@/context/AuthContext";
 import { AnalysisFilters } from "@/lib/types";
 import AuroraBackground from "@/components/ui/aurora-background";
+import { SparklesText } from "@/components/ui/sparkles-text";
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,35 +20,83 @@ export default function HomePage() {
   const { session } = useAuth();
 
   const heroRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
 
   useGSAP(
     () => {
-      if (!headingRef.current || !subRef.current) return;
+      if (!headingRef.current || !subRef.current || !badgeRef.current) return;
 
-      // Entrance animations
-      gsap.from(headingRef.current, {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-      });
-      gsap.from(subRef.current, {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        delay: 0.3,
-        ease: "power3.out",
-      });
+      const tl = gsap.timeline();
 
-      // Gentle float on heading
-      gsap.to(headingRef.current, {
-        y: -8,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
+      const lineOneLetters =
+        headingRef.current.querySelectorAll<HTMLSpanElement>(
+          ".line-one .letter",
+        );
+      const lineTwoLetters =
+        headingRef.current.querySelectorAll<HTMLSpanElement>(
+          ".line-two .letter",
+        );
+
+      if (lineOneLetters.length > 0) {
+        tl.from(lineOneLetters, {
+          yPercent: 120,
+          opacity: 0,
+          rotateX: -90,
+          duration: 0.95,
+          stagger: 0.035,
+          ease: "power4.out",
+        });
+      }
+
+      if (lineTwoLetters.length > 0) {
+        tl.from(
+          lineTwoLetters,
+          {
+            yPercent: 120,
+            opacity: 0,
+            rotateX: -90,
+            duration: 0.95,
+            stagger: 0.035,
+            ease: "power4.out",
+          },
+          "-=0.5",
+        );
+      }
+
+      tl.from(
+        badgeRef.current,
+        {
+          y: 24,
+          opacity: 0,
+          scale: 0.92,
+          duration: 0.65,
+          ease: "back.out(1.7)",
+        },
+        "-=0.45",
+      );
+
+      tl.from(
+        subRef.current,
+        {
+          y: 36,
+          opacity: 0,
+          duration: 0.75,
+          ease: "power3.out",
+        },
+        "-=0.3",
+      );
+
+      tl.add(() => {
+        if (!headingRef.current) return;
+        gsap.to(headingRef.current, {
+          y: -6,
+          duration: 4.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
       });
     },
     { scope: heroRef },
@@ -147,20 +196,47 @@ export default function HomePage() {
           </div>
 
           {/* Main heading */}
-          <h1
+          <div
             ref={headingRef}
-            className="font-bebas text-[64px] sm:text-[84px] lg:text-[112px] leading-[0.92] text-white mb-12 sm:mb-14"
-            style={{
-              fontFamily: "'Bebas Neue', cursive",
-              letterSpacing: "0.03em",
-            }}
+            className="relative mb-8 sm:mb-10 leading-[0.92] text-[64px] sm:text-[84px] lg:text-[112px] font-bebas"
+            style={{ letterSpacing: "0.03em" }}
           >
-            EVERY COMMIT
-            <br />
-            <span style={{ color: "var(--accent-yellow)" }}>
-              TELLS A STORY.
-            </span>
-          </h1>
+            <div className="line-one overflow-hidden text-white">
+              {"EVERY COMMIT".split("").map((letter, idx) => (
+                <span key={`line1-${idx}`} className="letter inline-block">
+                  {letter === " " ? "\u00A0" : letter}
+                </span>
+              ))}
+            </div>
+            <div className="line-two relative" style={{ color: "#FFD93D" }}>
+              <div className="overflow-hidden">
+                {"TELLS A STORY.".split("").map((letter, idx) => (
+                  <span key={`line2-${idx}`} className="letter inline-block">
+                    {letter === " " ? "\u00A0" : letter}
+                  </span>
+                ))}
+              </div>
+
+              <div className="absolute -inset-x-2 -inset-y-2 pointer-events-none">
+                <SparklesText
+                  text="TELLS A STORY."
+                  sparklesCount={4}
+                  colors={{ first: "#FFD93D", second: "#FE8BBB" }}
+                  className="font-bebas text-[64px] sm:text-[84px] lg:text-[112px] text-transparent select-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* <div
+            ref={badgeRef}
+            className="inline-block mb-8 sm:mb-10 border-2 border-[#2a2a2a] rounded-xl px-5 py-2"
+            style={{ background: "rgba(26,26,26,0.85)" }}
+          >
+            <p className="font-mono text-[0.7rem] sm:text-xs uppercase tracking-[0.2em] text-[#9aa3b2]">
+              THINKING BEYOND BORDERS
+            </p>
+          </div> */}
 
           {/* Subheading */}
           <p
@@ -189,14 +265,14 @@ export default function HomePage() {
           {/* History shortcut */}
           <p
             className="mt-6 text-sm flex gap-3 justify-center items-center"
-            style={{ color: "#444", fontFamily: "'DM Sans', sans-serif" }}
+            style={{ color: "#f9e6e6", fontFamily: "'DM Sans', sans-serif" }}
           >
             <span>Analyzed before?</span>
             <button
               onClick={() => navigate("/history")}
               className="transition-colors hover:opacity-80"
               style={{
-                color: "#666",
+                color: "#FFD93D",
                 textDecoration: "underline",
                 textUnderlineOffset: "3px",
               }}

@@ -82,7 +82,7 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
         >
           {showFilters ? "Hide filters" : "Show filters"}
         </button>
-        <span className="text-xs text-gray-600 uppercase tracking-widest">
+        <span className="text-xs text-gray-400 uppercase tracking-widest">
           Try:
         </span>
         {EXAMPLE_REPOS.map((example) => (

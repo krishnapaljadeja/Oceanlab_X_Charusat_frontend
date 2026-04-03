@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<!-- Rounded square bg -->
+<rect width="32" height="32" rx="6" fill="#0f1117"/>
+<!-- Book -->
+<rect x="4" y="4" width="19" height="24" rx="2" fill="#1a1f2e" stroke="#2d3550" stroke-width="0.8"/>
+<rect x="4" y="4" width="4" height="24" rx="1.5" fill="#141826"/>
+<rect x="8" y="3" width="15" height="24" rx="1.5" fill="#f5f0e8"/>
+<!-- Main branch green -->
+<line x1="12" y1="5" x2="12" y2="26" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"/>
+<circle cx="12" cy="8" r="2.2" fill="#4ade80"/>
+<circle cx="12" cy="14" r="2.2" fill="#4ade80"/>
+<circle cx="12" cy="21" r="2.2" fill="#4ade80"/>
+<!-- Feature branch blue -->
+<path d="M12 14 C17 14 17 17 17 19" stroke="#60a5fa" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M17 19 C17 21 14 21 12 21" stroke="#60a5fa" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<circle cx="17" cy="19" r="2" fill="#60a5fa"/>
+<!-- Merge highlight -->
+<circle cx="12" cy="21" r="3.2" fill="none" stroke="#a78bfa" stroke-width="1.2" opacity="0.9"/>
+<!-- Quill simplified -->
+<path d="M20 4 C26 2 29 5 29 9 C26 7 22 8 20 12 C22 9 25 10 25 14 C22 11 19 13 17 17 C17 12 17 7 20 4Z" fill="#ede8dd"/>
+<line x1="17" y1="17" x2="15" y2="24" stroke="#8a7050" stroke-width="1" stroke-linecap="round"/>
+<circle cx="15" cy="25" r="1.2" fill="#0f1117"/>
+</svg>
