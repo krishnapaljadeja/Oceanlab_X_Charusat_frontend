@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchHistory, analyzeRepo } from "@/lib/api";
 import { HistoryItem } from "@/lib/types";
 import HistoryCard from "@/components/HistoryCard";
+import { GridBackground } from "@/components/ui/grid-background";
 import { useAuth } from "@/context/AuthContext";
 
 export default function HistoryPage() {
@@ -46,7 +47,12 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#0f0f0f" }}>
+    <div
+      className="min-h-screen relative overflow-x-hidden"
+      style={{ background: "#0b0b0b" }}
+    >
+      <GridBackground className="z-0" />
+
       {/* ==================== NAVBAR ==================== */}
       <header
         className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between gap-4"
@@ -97,7 +103,7 @@ export default function HistoryPage() {
       </header>
 
       {/* ==================== MAIN ==================== */}
-      <main className="max-w-5xl mx-auto px-4 py-10">
+      <main className="relative z-10 max-w-5xl mx-auto px-4 py-10">
         {/* Page heading */}
         <div className="mb-8">
           <h1

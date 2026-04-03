@@ -12,6 +12,8 @@
   --accent-orange: #ff8c42;
   --bg-card: #1a1a1a;
   --border: #2a2a2a;
+  --aurora-color1: rgba(168, 85, 247, 0.2);
+  --aurora-color2: rgba(79, 70, 229, 0.2);
 }
 
 *,
@@ -38,6 +40,28 @@ body {
 
 .font-dmsans {
   font-family: "DM Sans", sans-serif;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
 }
 
 /* Chunky card style */

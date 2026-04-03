@@ -26,6 +26,7 @@ import CommitHeatmap from "@/components/CommitHeatmap";
 import { useAuth } from "@/context/AuthContext";
 import { ContinuousPagination } from "@/components/ui/continuous-pagination";
 import { ContinuousTabs } from "@/components/ui/continuous-tabs";
+import { GridBackground } from "@/components/ui/grid-background";
 import { refreshRepo } from "@/lib/api";
 
 const NAV_ITEMS = [
@@ -181,7 +182,12 @@ export default function AnalyzePage() {
   );
 
   return (
-    <div className="min-h-screen" style={{ background: "#0f0f0f" }}>
+    <div
+      className="min-h-screen relative overflow-x-hidden"
+      style={{ background: "#0b0b0b" }}
+    >
+      <GridBackground className="z-0" />
+
       {/* ==================== TOP NAV BAR ==================== */}
       <header
         className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between gap-4"
@@ -272,7 +278,7 @@ export default function AnalyzePage() {
       {/* ==================== MAIN CONTENT ==================== */}
       <main
         ref={containerRef}
-        className="max-w-5xl mx-auto px-4 py-8 space-y-8 sm:space-y-10"
+        className="relative z-10 max-w-5xl mx-auto px-4 py-8 space-y-8 sm:space-y-10"
       >
         {/* Freshness banner */}
         {result.staleness && (
