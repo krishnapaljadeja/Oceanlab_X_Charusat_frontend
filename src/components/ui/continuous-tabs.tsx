@@ -54,7 +54,6 @@ export const ContinuousTabs: FC<ContinuousTabsProps> = ({
         className="relative flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 rounded-full transition-all duration-300"
         style={{
           background: 'rgba(15,15,15,0.8)',
-          border: '1.5px solid rgba(255,217,61,0.2)',
           backdropFilter: 'blur(8px)',
         }}
       >

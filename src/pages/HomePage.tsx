@@ -180,7 +180,7 @@ export default function HomePage() {
       ))}
 
       {/* Hero content */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto mt-8 sm:mt-10">
+      <div className="relative z-10 text-center max-w-4xl mx-auto">
         {/* Eyebrow label */}
         <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border-2 border-[#2a2a2a] bg-[#1a1a1a]">
           <span className="w-2 h-2 rounded-full bg-[#6BCB77] animate-pulse" />
@@ -192,7 +192,7 @@ export default function HomePage() {
         {/* Main heading */}
         <h1
           ref={headingRef}
-          className="font-bebas text-[64px] sm:text-[84px] lg:text-[112px] leading-[0.92] text-white mb-8"
+          className="font-bebas text-[64px] sm:text-[84px] lg:text-[112px] leading-[0.92] text-white mb-12 sm:mb-14"
           style={{
             fontFamily: "'Bebas Neue', cursive",
             letterSpacing: "0.03em",

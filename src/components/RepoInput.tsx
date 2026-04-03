@@ -1,9 +1,7 @@
-import { useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { Search } from "lucide-react";
+import { useState } from "react";
 import AnalysisFilters from "@/components/AnalysisFilters";
 import { AnalysisFilters as AnalysisFiltersType } from "@/lib/types";
+import { AiInput003 } from "@/components/ui/ai-input-003";
 
 interface RepoInputProps {
   onAnalyze: (url: string, filters?: AnalysisFiltersType) => void;
@@ -51,118 +49,23 @@ export default function RepoInput({ onAnalyze, isLoading }: RepoInputProps) {
   const [url, setUrl] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<AnalysisFiltersType>(DEFAULT_FILTERS);
-  const btnRef = useRef<HTMLButtonElement>(null);
-
-  const { contextSafe } = useGSAP();
-
-  const handleBtnHoverIn = contextSafe(() => {
-    if (!btnRef.current) return;
-    gsap.to(btnRef.current, {
-      scale: 1.05,
-      boxShadow: "6px 6px 0px #000",
-      x: -2,
-      y: -2,
-      duration: 0.15,
-      ease: "power2.out",
-    });
-  });
-
-  const handleBtnHoverOut = contextSafe(() => {
-    if (!btnRef.current) return;
-    gsap.to(btnRef.current, {
-      scale: 1,
-      boxShadow: "4px 4px 0px #000",
-      x: 0,
-      y: 0,
-      duration: 0.15,
-      ease: "power2.in",
-    });
-  });
-
-  const handleBtnClick = contextSafe(() => {
-    if (!btnRef.current) return;
-    gsap
-      .timeline()
-      .to(btnRef.current, {
-        scale: 0.96,
-        boxShadow: "1px 1px 0px #000",
-        x: 2,
-        y: 2,
-        duration: 0.08,
-      })
-      .to(btnRef.current, {
-        scale: 1,
-        boxShadow: "4px 4px 0px #000",
-        x: 0,
-        y: 0,
-        duration: 0.12,
-      });
-  });
 
   const handleSubmit = () => {
     const trimmed = url.trim();
     if (!trimmed) return;
-    handleBtnClick();
     onAnalyze(trimmed, getEffectiveFilters(filters));
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="flex gap-3">
-        {/* Comic-book input */}
-        <div className="flex-1 relative">
-          <div
-            className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ color: "#4CC9F0" }}
-          >
-            <Search size={18} />
-          </div>
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-            placeholder="https://github.com/owner/repository"
-            disabled={isLoading}
-            className="w-full pl-11 pr-4 py-4 text-sm text-white placeholder-gray-600 rounded-xl disabled:opacity-50 focus:outline-none transition-colors"
-            style={{
-              background: "#1a1a1a",
-              border: "2px solid #2a2a2a",
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = "#FFD93D";
-              e.currentTarget.style.boxShadow =
-                "0 0 0 3px rgba(255,217,61,0.15)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = "#2a2a2a";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          />
-        </div>
-
-        {/* Chunky yellow analyze button */}
-        <button
-          ref={btnRef}
-          onClick={handleSubmit}
-          disabled={isLoading || !url.trim()}
-          onMouseEnter={handleBtnHoverIn}
-          onMouseLeave={handleBtnHoverOut}
-          className="px-7 py-4 rounded-xl font-bold text-sm tracking-widest uppercase text-black disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{
-            background: "var(--accent-yellow)",
-            border: "2px solid #000",
-            boxShadow: "4px 4px 0px #000",
-            fontFamily: "'Bebas Neue', cursive",
-            fontSize: "1.1rem",
-            letterSpacing: "0.08em",
-            willChange: "transform",
-          }}
-        >
-          {isLoading ? "..." : "Analyze"}
-        </button>
-      </div>
+      <AiInput003
+        value={url}
+        onValueChange={setUrl}
+        onSendMessage={() => handleSubmit()}
+        placeholder="https://github.com/owner/repository"
+        disabled={isLoading}
+        submitLabel={isLoading ? "..." : "Analyze"}
+      />
 
       {/* Example repos */}
       <div className="mt-4 flex flex-wrap gap-2 items-center">

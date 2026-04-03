@@ -31,9 +31,9 @@ export default function AppNavbar() {
         backdropFilter: "blur(8px)",
       }}
     >
-      <div className="px-4 py-2 flex items-center justify-between gap-3">
+      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
         <p
-          className="text-sm uppercase tracking-[0.16em]"
+          className="text-[0.8rem] uppercase tracking-[0.14em]"
           style={{ color: "#cfcfcf", fontFamily: "'Bebas Neue', cursive" }}
         >
           Git History Storyteller
@@ -43,7 +43,7 @@ export default function AppNavbar() {
           <ShimmerButton
             type="button"
             onClick={() => navigate("/")}
-            className="px-3 py-1.5 text-xs rounded-full"
+            className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
             style={navStyle(isAnalyze)}
           >
             Analyze
@@ -51,7 +51,7 @@ export default function AppNavbar() {
           <ShimmerButton
             type="button"
             onClick={() => navigate("/ingest")}
-            className="px-3 py-1.5 text-xs rounded-full"
+            className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
             style={navStyle(isIngest)}
           >
             Ingest
@@ -61,14 +61,14 @@ export default function AppNavbar() {
             <>
               <Link
                 to="/signup"
-                className="px-3 py-1.5 text-xs rounded-full"
+                className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
                 style={navStyle(isSignup)}
               >
                 Signup
               </Link>
               <Link
                 to="/login"
-                className="px-3 py-1.5 text-xs rounded-full"
+                className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
                 style={navStyle(isLogin)}
               >
                 Login
@@ -83,7 +83,7 @@ export default function AppNavbar() {
                 await signOut();
                 navigate("/login");
               }}
-              className="px-3 py-1.5 text-xs rounded-full"
+              className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
               style={{
                 background: "rgba(255,107,157,0.12)",
                 border: "1px solid rgba(255,107,157,0.35)",
