@@ -43,7 +43,7 @@ export default function AppNavbar() {
           <ShimmerButton
             type="button"
             onClick={() => navigate("/")}
-            className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
+            className="px-3 py-[6px] text-[0.7rem] rounded-full"
             style={navStyle(isAnalyze)}
           >
             Analyze
@@ -51,7 +51,7 @@ export default function AppNavbar() {
           <ShimmerButton
             type="button"
             onClick={() => navigate("/ingest")}
-            className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
+            className="px-3 py-[6px] text-[0.7rem] rounded-full"
             style={navStyle(isIngest)}
           >
             Ingest
@@ -61,14 +61,14 @@ export default function AppNavbar() {
             <>
               <Link
                 to="/signup"
-                className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
+                className="px-3 py-[6px] text-[0.7rem] rounded-full"
                 style={navStyle(isSignup)}
               >
                 Signup
               </Link>
               <Link
                 to="/login"
-                className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
+                className="px-3 py-[6px] text-[0.7rem] rounded-full"
                 style={navStyle(isLogin)}
               >
                 Login
@@ -83,7 +83,7 @@ export default function AppNavbar() {
                 await signOut();
                 navigate("/login");
               }}
-              className="px-3 py-[6px] text-[0.7rem] rounded-[991px]"
+              className="px-3 py-[6px] text-[0.7rem] rounded-full"
               style={{
                 background: "rgba(255,107,157,0.12)",
                 border: "1px solid rgba(255,107,157,0.35)",

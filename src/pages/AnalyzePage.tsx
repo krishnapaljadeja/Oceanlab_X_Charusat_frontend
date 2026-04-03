@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { toParas } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import {
   RotateCcw,
   FileText,
@@ -43,6 +45,10 @@ export default function AnalyzePage() {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const { session, loading } = useAuth();
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollToPlugin);
+  }, []);
 
   const handleRefresh = async () => {
     if (!result) return;
@@ -130,10 +136,22 @@ export default function AnalyzePage() {
   const scrollToSection = (id: string) => {
     setActiveSection(id);
     const el = document.getElementById(`section-${id}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!el) return;
+
+    gsap.to(window, {
+      duration: 0.8,
+      ease: "power2.out",
+      scrollTo: { y: el, offsetY: 90 },
+    });
   };
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToTop = () => {
+    gsap.to(window, {
+      duration: 0.8,
+      ease: "power2.out",
+      scrollTo: { y: 0 },
+    });
+  };
 
   if (!result) {
     return (
