@@ -12,15 +12,12 @@ interface NarrativeChapterProps {
 
 const BORDER_COLORS = ["#FFD93D", "#4CC9F0", "#FF6B9D", "#6BCB77", "#FF8C42"];
 
-const ROTATIONS = [-2, 1, -1, 2, -1.5];
-
 export default function NarrativeChapter({
   chapter,
   index,
 }: NarrativeChapterProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const color = BORDER_COLORS[index % BORDER_COLORS.length];
-  const rotation = ROTATIONS[index % ROTATIONS.length];
 
   useGSAP(
     () => {
@@ -55,8 +52,6 @@ export default function NarrativeChapter({
         border: "2px solid #2a2a2a",
         borderTop: `4px solid ${color}`,
         boxShadow: `4px 4px 0px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03)`,
-        transform: `rotate(${rotation}deg)`,
-        transformOrigin: "center",
         opacity: 0,
       }}
     >
