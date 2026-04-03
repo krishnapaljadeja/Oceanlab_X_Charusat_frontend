@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="380" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg">
+
+<!-- Book shadow -->
+<rect x="14" y="16" width="272" height="360" rx="8" fill="#000" opacity="0.22"/>
+
+<!-- Book back cover -->
+<rect x="8" y="8" width="272" height="358" rx="10" fill="#1a1f2e" stroke="#2d3550" stroke-width="2.5"/>
+
+<!-- Book spine -->
+<rect x="8" y="8" width="30" height="358" rx="8" fill="#141826" stroke="#2d3550" stroke-width="1.5"/>
+<line x1="32" y1="14" x2="32" y2="360" stroke="#3a4060" stroke-width="1"/>
+
+<!-- Pages stacked -->
+<rect x="38" y="11" width="242" height="356" rx="4" fill="#ddd6c4"/>
+<rect x="40" y="9"  width="242" height="356" rx="4" fill="#eae3d3"/>
+<rect x="42" y="6"  width="242" height="356" rx="4" fill="#f5f0e8"/>
+
+<!-- Ruled lines -->
+<line x1="64" y1="42"  x2="270" y2="42"  stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="66"  x2="270" y2="66"  stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="90"  x2="262" y2="90"  stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="114" x2="270" y2="114" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="138" x2="258" y2="138" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="162" x2="270" y2="162" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="186" x2="260" y2="186" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="210" x2="270" y2="210" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="234" x2="256" y2="234" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="258" x2="270" y2="258" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="282" x2="262" y2="282" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="306" x2="270" y2="306" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="330" x2="258" y2="330" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+<line x1="64" y1="350" x2="268" y2="350" stroke="#c8bfaa" stroke-width="1" opacity="0.55"/>
+
+<!-- Main branch (green) -->
+<line x1="92" y1="22" x2="92" y2="358" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+<circle cx="92" cy="38"  r="8" fill="#4ade80"/>
+<circle cx="92" cy="90"  r="8" fill="#4ade80"/>
+<circle cx="92" cy="186" r="8" fill="#4ade80"/>
+<circle cx="92" cy="282" r="8" fill="#4ade80"/>
+<circle cx="92" cy="350" r="8" fill="#4ade80"/>
+
+<!-- Feature branch (blue) -->
+<path d="M92 90 C126 90 126 110 126 126"  stroke="#60a5fa" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<line x1="126" y1="126" x2="126" y2="170" stroke="#60a5fa" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M126 170 C126 186 110 186 92 186" stroke="#60a5fa" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<circle cx="126" cy="136" r="7" fill="#60a5fa"/>
+<circle cx="126" cy="162" r="7" fill="#60a5fa"/>
+
+<!-- Merge ring -->
+<circle cx="92" cy="186" r="13" fill="none" stroke="#a78bfa" stroke-width="3" opacity="0.9"/>
+
+<!-- Hotfix branch (pink) -->
+<path d="M92 186 C168 186 168 210 168 224"  stroke="#f472b6" stroke-width="3" fill="none" stroke-linecap="round"/>
+<line x1="168" y1="224" x2="168" y2="266"   stroke="#f472b6" stroke-width="3" stroke-linecap="round"/>
+<path d="M168 266 C168 282 130 282 92 282"   stroke="#f472b6" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.75"/>
+<circle cx="168" cy="244" r="6" fill="#f472b6"/>
+
+<!-- Amber branch -->
+<path d="M92 282 C140 282 140 298 140 310"  stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<line x1="140" y1="310" x2="140" y2="338"   stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M140 338 C140 350 116 350 92 350"   stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+<circle cx="140" cy="324" r="5.5" fill="#f59e0b"/>
+
+<!-- Quill vane -->
+<path d="M208 6 C256 -10 296 8 308 36 C288 24 262 26 238 52 C256 36 276 44 278 66 C258 50 232 54 214 80 C218 56 214 28 208 6Z" fill="#ede8dd" stroke="#c8bfaa" stroke-width="1"/>
+<path d="M215 14 C244 4 274 14 290 32" fill="none" stroke="#c8bfaa" stroke-width="0.9" opacity="0.65"/>
+<path d="M220 32 C246 20 270 28 284 48" fill="none" stroke="#c8bfaa" stroke-width="0.9" opacity="0.65"/>
+<path d="M220 52 C242 40 264 46 274 64" fill="none" stroke="#c8bfaa" stroke-width="0.9" opacity="0.65"/>
+
+<!-- Quill shaft -->
+<path d="M214 80 L202 124" stroke="#b89a70" stroke-width="4" stroke-linecap="round"/>
+<path d="M202 124 L192 164" stroke="#9a7a50" stroke-width="3" stroke-linecap="round"/>
+
+<!-- Nib -->
+<path d="M192 164 L186 186 L190 186 L186 202 L194 182 L198 186Z" fill="#1a1a2e"/>
+<circle cx="186.5" cy="203" r="4" fill="#1a1a2e"/>
+
+<!-- Ink trail -->
+<path d="M186 203 C180 214 168 220 162 208" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-dasharray="3 4" opacity="0.35"/>
+
+<!-- Sparkles -->
+<circle cx="304" cy="6"  r="3"   fill="#f59e0b" opacity="0.75"/>
+<circle cx="318" cy="22" r="2"   fill="#60a5fa" opacity="0.65"/>
+<circle cx="8"   cy="4"  r="2.5" fill="#4ade80" opacity="0.65"/>
+
+</svg>

@@ -32,12 +32,19 @@ export default function AppNavbar() {
       }}
     >
       <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <p
-          className="text-[0.8rem] uppercase tracking-[0.14em]"
-          style={{ color: "#cfcfcf", fontFamily: "'Bebas Neue', cursive" }}
-        >
-          Git History Storyteller
-        </p>
+        <div className="flex items-center gap-2">
+          <img
+            src="/gitstoryteller-logo-icon.svg"
+            alt="Git History Storyteller logo"
+            className="h-6 w-auto"
+          />
+          <p
+            className="text-[0.8rem] uppercase tracking-[0.14em]"
+            style={{ color: "#cfcfcf", fontFamily: "'Bebas Neue', cursive" }}
+          >
+            Git History Storyteller
+          </p>
+        </div>
 
         <nav className="flex items-center gap-2">
           <ShimmerButton

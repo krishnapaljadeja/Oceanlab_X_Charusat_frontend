@@ -21,12 +21,11 @@ export default function HomePage() {
 
   const heroRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
 
   useGSAP(
     () => {
-      if (!headingRef.current || !subRef.current || !badgeRef.current) return;
+      if (!headingRef.current || !subRef.current) return;
 
       const tl = gsap.timeline();
 
@@ -64,18 +63,6 @@ export default function HomePage() {
           "-=0.5",
         );
       }
-
-      tl.from(
-        badgeRef.current,
-        {
-          y: 24,
-          opacity: 0,
-          scale: 0.92,
-          duration: 0.65,
-          ease: "back.out(1.7)",
-        },
-        "-=0.45",
-      );
 
       tl.from(
         subRef.current,
