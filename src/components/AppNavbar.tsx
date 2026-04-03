@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 function navStyle(active: boolean) {
   return {
@@ -39,20 +40,22 @@ export default function AppNavbar() {
         </p>
 
         <nav className="flex items-center gap-2">
-          <Link
-            to="/"
+          <ShimmerButton
+            type="button"
+            onClick={() => navigate("/")}
             className="px-3 py-1.5 text-xs rounded-full"
             style={navStyle(isAnalyze)}
           >
             Analyze
-          </Link>
-          <Link
-            to="/ingest"
+          </ShimmerButton>
+          <ShimmerButton
+            type="button"
+            onClick={() => navigate("/ingest")}
             className="px-3 py-1.5 text-xs rounded-full"
             style={navStyle(isIngest)}
           >
             Ingest
-          </Link>
+          </ShimmerButton>
 
           {!session && (
             <>
@@ -74,7 +77,7 @@ export default function AppNavbar() {
           )}
 
           {session && (
-            <button
+            <ShimmerButton
               type="button"
               onClick={async () => {
                 await signOut();
@@ -88,7 +91,7 @@ export default function AppNavbar() {
               }}
             >
               Logout
-            </button>
+            </ShimmerButton>
           )}
         </nav>
       </div>

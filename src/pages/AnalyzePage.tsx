@@ -2,17 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { toParas } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowUp,
   RotateCcw,
-  BookOpen,
-  Layers,
-  Clock,
-  Users,
-  Heart,
   FileText,
   FileDown,
   Loader2,
   History,
+  ArrowUp,
 } from "lucide-react";
 import { AnalysisResponse } from "@/lib/types";
 import ProjectOverview from "@/components/ProjectOverview";
@@ -28,14 +23,15 @@ import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
 import { useAuth } from "@/context/AuthContext";
 import { ContinuousPagination } from "@/components/ui/continuous-pagination";
+import { ContinuousTabs } from "@/components/ui/continuous-tabs";
 import { refreshRepo } from "@/lib/api";
 
 const NAV_ITEMS = [
-  { id: "story", label: "STORY", icon: BookOpen },
-  { id: "phases", label: "PHASES", icon: Layers },
-  { id: "timeline", label: "TIMELINE", icon: Clock },
-  { id: "contributors", label: "CONTRIBUTORS", icon: Users },
-  { id: "health", label: "HEALTH", icon: Heart },
+  { id: "story", label: "STORY" },
+  { id: "phases", label: "PHASES" },
+  { id: "timeline", label: "TIMELINE" },
+  { id: "contributors", label: "CONTRIBUTORS" },
+  { id: "health", label: "HEALTH" },
 ];
 
 export default function AnalyzePage() {
@@ -132,6 +128,7 @@ export default function AnalyzePage() {
   }, [result]);
 
   const scrollToSection = (id: string) => {
+    setActiveSection(id);
     const el = document.getElementById(`section-${id}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -206,34 +203,14 @@ export default function AnalyzePage() {
           </button>
         </div>
 
-        {/* Nav tabs — absolutely centered */}
-        <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1">
-          {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
-            const isActive = activeSection === id;
-            return (
-              <button
-                key={id}
-                onClick={() => scrollToSection(id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                style={{
-                  background: isActive
-                    ? "rgba(255,217,61,0.12)"
-                    : "transparent",
-                  color: isActive ? "#FFD93D" : "#666",
-                  border: isActive
-                    ? "1.5px solid rgba(255,217,61,0.3)"
-                    : "1.5px solid transparent",
-                  fontFamily: "'Bebas Neue', cursive",
-                  letterSpacing: "0.06em",
-                  fontSize: "0.8rem",
-                }}
-              >
-                <Icon size={12} />
-                <span className="hidden md:inline">{label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        {/* Nav tabs — ContinuousTabs component */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <ContinuousTabs
+            tabs={NAV_ITEMS}
+            activeId={activeSection}
+            onChange={scrollToSection}
+          />
+        </div>
 
         {/* Right side: repo name + export button */}
         <div className="flex items-center gap-3">
@@ -277,7 +254,7 @@ export default function AnalyzePage() {
       {/* ==================== MAIN CONTENT ==================== */}
       <main
         ref={containerRef}
-        className="max-w-5xl mx-auto px-4 py-10 space-y-20"
+        className="max-w-5xl mx-auto px-4 py-8 space-y-8 sm:space-y-10"
       >
         {/* Freshness banner */}
         {result.staleness && (
