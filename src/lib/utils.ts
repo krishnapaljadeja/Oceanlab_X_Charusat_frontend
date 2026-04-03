@@ -1,3 +1,7 @@
+export function cn(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
+}
+
 /**
  * Splits a long text string into readable paragraphs.
  *

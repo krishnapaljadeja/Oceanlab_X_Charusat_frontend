@@ -1,6 +1,7 @@
 import { Loader2 } from "lucide-react";
 import { StalenessInfo } from "@/lib/types";
 import { timeAgo } from "@/lib/timeAgo";
+import { FeedbackAction } from "@/components/ui/feedback-action";
 
 interface FreshnessBannerProps {
   staleness: StalenessInfo;
@@ -14,6 +15,36 @@ export default function FreshnessBanner({
   onRefresh,
   isRefreshing,
 }: FreshnessBannerProps) {
+  const refreshControl = isRefreshing ? (
+    <FeedbackAction
+      loadingMessage="Syncing"
+      errorMessage="Refresh Failed"
+      initialStatus="loading"
+      lockLoading
+      hideRetryButton
+    />
+  ) : (
+    <button
+      onClick={onRefresh}
+      disabled={isRefreshing}
+      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all disabled:cursor-not-allowed"
+      style={{
+        fontFamily: "'Bebas Neue', cursive",
+        letterSpacing: "0.06em",
+        background: staleness.isStale
+          ? "rgba(255,217,61,0.12)"
+          : "rgba(107,203,119,0.12)",
+        color: staleness.isStale ? "#FFD93D" : "#6BCB77",
+        border: staleness.isStale
+          ? "1.5px solid rgba(255,217,61,0.3)"
+          : "1.5px solid rgba(107,203,119,0.3)",
+      }}
+    >
+      {isRefreshing && <Loader2 size={10} className="animate-spin" />}
+      {staleness.isStale ? "REFRESH ANALYSIS" : "RE-ANALYZE"}
+    </button>
+  );
+
   if (!staleness.isStale) {
     return (
       <div
@@ -35,23 +66,7 @@ export default function FreshnessBanner({
             Analyzed {timeAgo(staleness.lastAnalyzedAt)}
           </span>
         </div>
-        <button
-          onClick={onRefresh}
-          disabled={isRefreshing}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all disabled:cursor-not-allowed"
-          style={{
-            fontFamily: "'Bebas Neue', cursive",
-            letterSpacing: "0.06em",
-            background: isRefreshing
-              ? "rgba(107,203,119,0.05)"
-              : "rgba(107,203,119,0.12)",
-            color: isRefreshing ? "#555" : "#6BCB77",
-            border: "1.5px solid rgba(107,203,119,0.3)",
-          }}
-        >
-          {isRefreshing && <Loader2 size={10} className="animate-spin" />}
-          {isRefreshing ? "ANALYZING..." : "RE-ANALYZE"}
-        </button>
+        {refreshControl}
       </div>
     );
   }
@@ -79,23 +94,7 @@ export default function FreshnessBanner({
           Last analyzed {timeAgo(staleness.lastAnalyzedAt)}
         </span>
       </div>
-      <button
-        onClick={onRefresh}
-        disabled={isRefreshing}
-        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all disabled:cursor-not-allowed"
-        style={{
-          fontFamily: "'Bebas Neue', cursive",
-          letterSpacing: "0.06em",
-          background: isRefreshing
-            ? "rgba(255,217,61,0.06)"
-            : "rgba(255,217,61,0.12)",
-          color: isRefreshing ? "#555" : "#FFD93D",
-          border: "1.5px solid rgba(255,217,61,0.3)",
-        }}
-      >
-        {isRefreshing && <Loader2 size={10} className="animate-spin" />}
-        {isRefreshing ? "ANALYZING..." : "REFRESH ANALYSIS"}
-      </button>
+      {refreshControl}
     </div>
   );
 }
