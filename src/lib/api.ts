@@ -9,6 +9,7 @@ import {
   ContributorProfile,
   GeneratedDocs,
   IngestDigest,
+  OnboardingGuideResponse,
 } from "./types";
 import { supabase } from "./supabase";
 
@@ -281,6 +282,34 @@ export async function generateIngestReadme(
       error:
         axiosErr.response?.data?.error ||
         "Could not generate README. Please try again.",
+    };
+  }
+}
+
+export async function generateOnboardingGuide(
+  repoUrl: string,
+  options?: {
+    roleHint?: string;
+  },
+): Promise<
+  OnboardingGuideResponse | { success: false; error: string; code?: string }
+> {
+  try {
+    const headers = await buildAuthHeaders();
+    const response = await axios.post<OnboardingGuideResponse>(
+      `${BACKEND_URL}/api/onboard`,
+      { repoUrl, options },
+      { timeout: 180000, headers },
+    );
+    return response.data;
+  } catch (err) {
+    const axiosErr = err as AxiosError<{ error?: string; code?: string }>;
+    return {
+      success: false,
+      error:
+        axiosErr.response?.data?.error ||
+        "Could not generate onboarding guide. Please try again.",
+      code: axiosErr.response?.data?.code,
     };
   }
 }

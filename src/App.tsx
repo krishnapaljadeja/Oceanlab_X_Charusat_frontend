@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AnalyzePage from "./pages/AnalyzePage";
 import IngestPage from "./pages/IngestPage";
+import OnboardPage from "./pages/OnboardPage";
 import HistoryPage from "./pages/HistoryPage";
 import AuthPage from "./pages/AuthPage";
 import ContributorPage from "./pages/ContributorPage";
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/analyze" element={<AnalyzePage />} />
           <Route path="/ingest" element={<IngestPage />} />
+          <Route path="/onboard" element={<OnboardPage />} />
           <Route path="/contributor/:login" element={<ContributorPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

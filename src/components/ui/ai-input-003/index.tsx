@@ -161,15 +161,15 @@ export const AiInput003: React.FC<AiInput003Props> = ({
           whileTap={{ scale: 0.92 }}
           onClick={handleSendMessage}
           disabled={!inputValue.trim() || disabled}
-          className={`z-10 ml-2.5 flex min-w-[96px] h-9 items-center justify-center rounded-xl px-3.5 transition-all duration-300 ${
+          className={`z-10 ml-2.5 pt-1 flex min-w-[96px] h-9 items-center justify-center rounded-xl px-3.5 transition-all duration-300 ${
             inputValue.trim() && !disabled
-              ? "bg-[#8E7D1A] text-black shadow-sm"
+              ? "bg-[#d2b50e] text-black shadow-sm"
               : "bg-neutral-700 text-neutral-300"
           }`}
           style={{
             fontFamily: "'Bebas Neue', cursive",
             letterSpacing: "0.06em",
-            fontSize: "0.95rem",
+            fontSize: "0.99rem",
           }}
         >
           {submitLabel ? submitLabel : <ArrowUp size={20} strokeWidth={3} />}

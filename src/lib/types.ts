@@ -142,6 +142,21 @@ export interface IngestDigest {
   content: string;
 }
 
+export interface OnboardingGuideRequest {
+  repoUrl: string;
+  options?: {
+    roleHint?: string;
+  };
+}
+
+export interface OnboardingGuideResponse {
+  success: true;
+  guide: string;
+  repoFullName: string;
+  generatedAt: string;
+  fromStoredAnalysis: true;
+}
+
 export interface ErrorResponse {
   success: false;
   error: string;

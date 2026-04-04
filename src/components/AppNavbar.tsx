@@ -18,6 +18,7 @@ export default function AppNavbar() {
   const isAnalyze =
     location.pathname === "/" || location.pathname === "/analyze";
   const isIngest = location.pathname.startsWith("/ingest");
+  const isOnboard = location.pathname.startsWith("/onboard");
   const isLogin = location.pathname === "/login";
   const isSignup = location.pathname === "/signup";
 
@@ -62,6 +63,14 @@ export default function AppNavbar() {
             style={navStyle(isIngest)}
           >
             Ingest
+          </ShimmerButton>
+          <ShimmerButton
+            type="button"
+            onClick={() => navigate("/onboard")}
+            className="px-3 py-[6px] text-[0.7rem] rounded-full"
+            style={navStyle(isOnboard)}
+          >
+            Onboard
           </ShimmerButton>
 
           {!session && (
