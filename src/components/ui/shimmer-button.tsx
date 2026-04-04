@@ -13,7 +13,7 @@ export function ShimmerButton({
   return (
     <button
       className={cn(
-        "relative overflow-hidden px-6 py-3 rounded-lg font-medium",
+        "relative overflow-hidden px-6 py-3 font-medium",
         "bg-primary text-primary-foreground",
         "hover:shadow-lg transition-shadow duration-300",
         "group",
