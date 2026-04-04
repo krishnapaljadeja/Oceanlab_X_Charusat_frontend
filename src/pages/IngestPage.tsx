@@ -108,10 +108,8 @@ export default function IngestPage() {
     setError(null);
     setIsGeneratingReadme(true);
 
-    const result = await generateIngestReadme(
-      repoUrl.trim(),
-      digest || undefined,
-    );
+    // Always regenerate digest server-side to avoid posting very large payloads.
+    const result = await generateIngestReadme(repoUrl.trim());
     if (!result.success) {
       setError(result.error);
       setIsGeneratingReadme(false);
