@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,31 +8,52 @@ interface PhasesSectionProps {
   phases: DevelopmentPhase[];
 }
 
-const PHASE_COLORS = [
-  "#FFD93D",
-  "#4CC9F0",
-  "#FF6B9D",
-  "#6BCB77",
-  "#FF8C42",
-  "#c084fc",
-  "#f97316",
-];
-const VELOCITY_COLORS = { high: "#6BCB77", medium: "#FFD93D", low: "#FF8C42" };
-
 export default function PhasesSection({ phases }: PhasesSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
+  const [activeFilter, setActiveFilter] = useState<
+    "all" | "high" | "medium" | "low"
+  >("all");
 
-  // Build SVG path that snakes based on number of phases
+  const PHASE_COLORS = [
+    "#FFD93D",
+    "#4CC9F0",
+    "#FF6B9D",
+    "#6BCB77",
+    "#FF8C42",
+    "#c084fc",
+    "#f97316",
+  ];
+  const VELOCITY_COLORS = {
+    high: "#6BCB77",
+    medium: "#FFD93D",
+    low: "#FF8C42",
+  };
+
+  const filteredPhases = useMemo(() => {
+    if (activeFilter === "all") return phases;
+    return phases.filter((phase) => phase.velocity === activeFilter);
+  }, [activeFilter, phases]);
+
+  const counts = useMemo(
+    () => ({
+      all: phases.length,
+      high: phases.filter((phase) => phase.velocity === "high").length,
+      medium: phases.filter((phase) => phase.velocity === "medium").length,
+      low: phases.filter((phase) => phase.velocity === "low").length,
+    }),
+    [phases],
+  );
+
   const SVG_WIDTH = 600;
   const ROW_HEIGHT = 200;
-  const totalHeight = (phases.length + 1) * ROW_HEIGHT;
+  const totalHeight = (filteredPhases.length + 1) * ROW_HEIGHT;
 
   const buildPath = () => {
     const segments: string[] = [];
     const cols = [80, SVG_WIDTH - 80];
-    phases.forEach((_, i) => {
+    filteredPhases.forEach((_, i) => {
       const y = 60 + i * ROW_HEIGHT;
       const x = cols[i % 2];
       if (i === 0) {
@@ -47,8 +68,7 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
     return segments.join(" ");
   };
 
-  // Square positions for each phase node
-  const nodePositions = phases.map((_, i) => {
+  const nodePositions = filteredPhases.map((_, i) => {
     const cols = [80, SVG_WIDTH - 80];
     return {
       x: cols[i % 2],
@@ -62,7 +82,7 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
-      if (!pathRef.current || phases.length === 0) return;
+      if (!pathRef.current || filteredPhases.length === 0) return;
 
       const length = pathRef.current.getTotalLength();
       gsap.set(pathRef.current, {
@@ -81,7 +101,7 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
         },
       });
 
-      // Stagger cards
+      cardRefs.current = cardRefs.current.slice(0, filteredPhases.length);
       cardRefs.current.forEach((el, i) => {
         if (!el) return;
         const side = nodePositions[i]?.side;
@@ -103,12 +123,15 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
         );
       });
     },
-    { scope: containerRef },
+    {
+      scope: containerRef,
+      dependencies: [filteredPhases],
+      revertOnUpdate: true,
+    },
   );
 
   return (
     <div ref={containerRef} className="space-y-4">
-      {/* Header */}
       <div className="flex items-center gap-4">
         <h2
           className="text-4xl"
@@ -131,20 +154,49 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
             letterSpacing: "0.06em",
           }}
         >
-          {phases.length} PHASES
+          {filteredPhases.length} PHASES
         </span>
       </div>
 
-      {/* Board game layout */}
+      <div className="flex flex-wrap gap-2.5">
+        {(
+          [
+            { key: "all", label: "ALL", count: counts.all },
+            { key: "high", label: "HIGH", count: counts.high },
+            { key: "medium", label: "MEDIUM", count: counts.medium },
+            { key: "low", label: "LOW", count: counts.low },
+          ] as const
+        ).map((tab) => {
+          const selected = activeFilter === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveFilter(tab.key)}
+              className="px-4 py-2 rounded-md text-sm"
+              style={{
+                background: selected ? "#111" : "#1b1b1b",
+                color: selected ? "#FFD93D" : "#aaa",
+                border: selected
+                  ? "1px solid rgba(255,217,61,0.5)"
+                  : "1px solid #2a2a2a",
+                fontFamily: "'DM Sans', sans-serif",
+                letterSpacing: "0.1em",
+              }}
+            >
+              {tab.label} ({tab.count})
+            </button>
+          );
+        })}
+      </div>
+
       <div className="relative" style={{ minHeight: totalHeight }}>
-        {/* SVG path track */}
         <svg
           viewBox={`0 0 ${SVG_WIDTH} ${totalHeight}`}
           className="absolute inset-0 w-full"
           style={{ height: totalHeight, pointerEvents: "none" }}
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Background track */}
           <path
             d={pathD}
             stroke="#2a2a2a"
@@ -152,7 +204,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
             strokeLinecap="round"
             fill="none"
           />
-          {/* Animated draw path */}
           <path
             ref={pathRef}
             d={pathD}
@@ -162,7 +213,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
             fill="none"
           />
 
-          {/* Node circles on path */}
           {nodePositions.map((pos, i) => {
             const color = PHASE_COLORS[i % PHASE_COLORS.length];
             return (
@@ -190,8 +240,7 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
           })}
         </svg>
 
-        {/* Phase cards beside path */}
-        {phases.map((phase, i) => {
+        {filteredPhases.map((phase, i) => {
           const pos = nodePositions[i];
           const color = PHASE_COLORS[i % PHASE_COLORS.length];
           const totalCommits =
@@ -217,12 +266,11 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
                 background: "#1a1a1a",
                 border: `2px solid ${color}`,
                 borderTop: `4px solid ${color}`,
-                boxShadow: `4px 4px 0 rgba(0,0,0,0.4)`,
+                boxShadow: "4px 4px 0 rgba(0,0,0,0.4)",
                 opacity: 0,
                 zIndex: 2,
               }}
             >
-              {/* Phase number + name */}
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <span
@@ -241,7 +289,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
                     {phase.name}
                   </h3>
                 </div>
-                {/* Velocity badge */}
                 <span
                   className="text-xs px-2 py-0.5 rounded-full flex-shrink-0"
                   style={{
@@ -257,7 +304,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
                 </span>
               </div>
 
-              {/* Dominant type pill */}
               <span
                 className="inline-block text-xs px-2 py-0.5 rounded-full mb-2"
                 style={{
@@ -271,7 +317,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
                 {phase.dominantType}
               </span>
 
-              {/* Type breakdown bars */}
               <div className="space-y-1 mb-2">
                 {Object.entries(phase.commitTypeBreakdown)
                   .sort(([, a], [, b]) => b - a)
@@ -315,7 +360,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
                   ))}
               </div>
 
-              {/* Commit count */}
               <div className="flex items-center justify-between">
                 <span
                   style={{
@@ -326,7 +370,6 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
                 >
                   {phase.commitCount} commits
                 </span>
-                {/* Contributors */}
                 <div className="flex gap-1">
                   {phase.contributors.slice(0, 3).map((c) => (
                     <span
@@ -347,6 +390,15 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
             </div>
           );
         })}
+
+        {filteredPhases.length === 0 && (
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ color: "#888", fontFamily: "'DM Sans', sans-serif" }}
+          >
+            No phases for this filter.
+          </div>
+        )}
       </div>
     </div>
   );

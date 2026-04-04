@@ -23,6 +23,7 @@ import HealthScore from "@/components/HealthScore";
 import FreshnessBanner from "@/components/FreshnessBanner";
 import RepoQA from "@/components/RepoQA";
 import CommitHeatmap from "@/components/CommitHeatmap";
+import DevelopmentSignalsSection from "@/components/DevelopmentSignalsSection";
 import { useAuth } from "@/context/AuthContext";
 import { ContinuousPagination } from "@/components/ui/continuous-pagination";
 import { ContinuousTabs } from "@/components/ui/continuous-tabs";
@@ -34,13 +35,50 @@ const NAV_ITEMS = [
   { id: "phases", label: "PHASES" },
   { id: "timeline", label: "TIMELINE" },
   { id: "contributors", label: "CONTRIBUTORS" },
+  { id: "activity", label: "ACTIVITY" },
+  { id: "signals", label: "SIGNALS" },
   { id: "health", label: "HEALTH" },
 ];
+
+type TimelineFilter = "all" | "milestone" | "phase" | "default" | "release";
+
+function getTimelineCategoryFromMilestone(
+  milestone: AnalysisResponse["summary"]["milestones"][number],
+): TimelineFilter {
+  if (milestone.type === "version_release") return "release";
+  if (
+    /phase|sprint|stabil|modern|polish|version|renaissance|genesis/i.test(
+      `${milestone.title} ${milestone.significance}`,
+    )
+  ) {
+    return "phase";
+  }
+  if (
+    milestone.type === "initial_commit" ||
+    milestone.type === "commit_count_threshold" ||
+    milestone.type === "contributor_spike"
+  ) {
+    return "milestone";
+  }
+  return "default";
+}
+
+function getTimelineCategoryFromHighlight(
+  highlight: AnalysisResponse["narrative"]["milestoneHighlights"][number],
+): TimelineFilter {
+  const text = `${highlight.title} ${highlight.significance}`;
+  if (/release|tag|v\d+(\.\d+)+/i.test(text)) return "release";
+  if (/phase|sprint|stabil|modern|polish|renaissance|genesis/i.test(text))
+    return "phase";
+  if (/milestone|threshold|first|initial|spike/i.test(text)) return "milestone";
+  return "default";
+}
 
 export default function AnalyzePage() {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [activeSection, setActiveSection] = useState("story");
   const [chapterPage, setChapterPage] = useState(1);
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("all");
   const [exporting, setExporting] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
@@ -180,6 +218,56 @@ export default function AnalyzePage() {
     startChapterIndex,
     startChapterIndex + chaptersPerPage,
   );
+
+  const timelineTabs: Array<{
+    id: TimelineFilter;
+    label: string;
+    count: number;
+  }> = [
+    { id: "all", label: "ALL", count: summary.milestones.length },
+    {
+      id: "milestone",
+      label: "MILESTONE",
+      count: summary.milestones.filter(
+        (m) => getTimelineCategoryFromMilestone(m) === "milestone",
+      ).length,
+    },
+    {
+      id: "phase",
+      label: "PHASE",
+      count: summary.milestones.filter(
+        (m) => getTimelineCategoryFromMilestone(m) === "phase",
+      ).length,
+    },
+    {
+      id: "default",
+      label: "DEFAULT",
+      count: summary.milestones.filter(
+        (m) => getTimelineCategoryFromMilestone(m) === "default",
+      ).length,
+    },
+    {
+      id: "release",
+      label: "RELEASE",
+      count: summary.milestones.filter(
+        (m) => getTimelineCategoryFromMilestone(m) === "release",
+      ).length,
+    },
+  ];
+
+  const filteredTimelineMilestones =
+    timelineFilter === "all"
+      ? summary.milestones
+      : summary.milestones.filter(
+          (m) => getTimelineCategoryFromMilestone(m) === timelineFilter,
+        );
+
+  const filteredMilestoneHighlights =
+    timelineFilter === "all"
+      ? narrative.milestoneHighlights
+      : narrative.milestoneHighlights.filter(
+          (m) => getTimelineCategoryFromHighlight(m) === timelineFilter,
+        );
 
   return (
     <div
@@ -435,9 +523,34 @@ export default function AnalyzePage() {
 
         {/* ===== TIMELINE ===== */}
         <section id="section-timeline" className="scroll-mt-20 space-y-4">
+          <div className="flex flex-wrap gap-2.5">
+            {timelineTabs.map((tab) => {
+              const selected = timelineFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setTimelineFilter(tab.id)}
+                  className="px-4 py-2 rounded-md text-sm"
+                  style={{
+                    background: selected ? "#111" : "#1b1b1b",
+                    color: selected ? "#FFD93D" : "#aaa",
+                    border: selected
+                      ? "1px solid rgba(255,217,61,0.5)"
+                      : "1px solid #2a2a2a",
+                    fontFamily: "'DM Sans', sans-serif",
+                    letterSpacing: "0.1em",
+                  }}
+                >
+                  {tab.label} ({tab.count})
+                </button>
+              );
+            })}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Timeline milestones={summary.milestones} />
-            <MilestoneList milestones={narrative.milestoneHighlights} />
+            <Timeline milestones={filteredTimelineMilestones} />
+            <MilestoneList milestones={filteredMilestoneHighlights} />
           </div>
         </section>
 
@@ -451,10 +564,16 @@ export default function AnalyzePage() {
         </section>
 
         {/* ===== COMMIT HEATMAP ===== */}
-        <CommitHeatmap
-          owner={result.repoMeta.fullName.split("/")[0]}
-          repo={result.repoMeta.fullName.split("/")[1]}
-        />
+        <section id="section-activity" className="scroll-mt-20">
+          <CommitHeatmap
+            owner={result.repoMeta.fullName.split("/")[0]}
+            repo={result.repoMeta.fullName.split("/")[1]}
+          />
+        </section>
+
+        <section id="section-signals" className="scroll-mt-20">
+          <DevelopmentSignalsSection summary={summary} />
+        </section>
 
         {/* ===== HEALTH ===== */}
         <section id="section-health" className="scroll-mt-20">

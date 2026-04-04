@@ -24,11 +24,12 @@ const ACCENT_COLORS = ["#FFD93D", "#4CC9F0", "#FF6B9D", "#6BCB77", "#FF8C42"];
 export default function Timeline({ milestones }: TimelineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
-  const isScrollable = milestones.length > 6;
+  const isScrollable = milestones.length > 8;
 
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
+      itemRefs.current = itemRefs.current.slice(0, milestones.length);
       itemRefs.current.forEach((el, i) => {
         if (!el) return;
         if (isScrollable) {
@@ -54,7 +55,11 @@ export default function Timeline({ milestones }: TimelineProps) {
         );
       });
     },
-    { scope: containerRef },
+    {
+      scope: containerRef,
+      dependencies: [milestones, isScrollable],
+      revertOnUpdate: true,
+    },
   );
 
   return (
@@ -82,7 +87,6 @@ export default function Timeline({ milestones }: TimelineProps) {
         className={isScrollable ? "relative pr-2 overflow-y-auto" : "relative"}
         style={isScrollable ? { maxHeight: 640 } : undefined}
       >
-        {/* Dashed center line */}
         <div
           className="absolute left-5 top-0 bottom-0"
           style={{ width: 2, borderLeft: "2px dashed #2a2a2a" }}
@@ -98,9 +102,8 @@ export default function Timeline({ milestones }: TimelineProps) {
                   if (el) itemRefs.current[i] = el;
                 }}
                 className="flex gap-4 relative"
-                style={{ opacity: 0 }}
+                style={{ opacity: isScrollable ? 1 : 0 }}
               >
-                {/* Icon circle */}
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 z-10"
                   style={{
@@ -151,6 +154,15 @@ export default function Timeline({ milestones }: TimelineProps) {
               </div>
             );
           })}
+
+          {milestones.length === 0 && (
+            <div
+              className="text-sm"
+              style={{ color: "#888", fontFamily: "'DM Sans', sans-serif" }}
+            >
+              No entries for this filter.
+            </div>
+          )}
         </div>
       </div>
     </div>

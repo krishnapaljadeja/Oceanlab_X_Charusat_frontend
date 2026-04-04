@@ -22,10 +22,14 @@ export default function ProjectOverview({
   const containerRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement[]>([]);
 
-  const ageYears = Math.round(
-    (new Date().getTime() - new Date(repoMeta.createdAt).getTime()) /
-      (1000 * 60 * 60 * 24 * 365),
+  const repoAgeMs =
+    new Date().getTime() - new Date(repoMeta.createdAt).getTime();
+  const ageMonths = Math.max(
+    1,
+    Math.round(repoAgeMs / (1000 * 60 * 60 * 24 * 30.4375)),
   );
+  const ageYears = Math.floor(ageMonths / 12);
+  const ageLabel = ageYears < 1 ? `${ageMonths}mo` : `${ageYears}y`;
 
   const stats = [
     {
@@ -39,7 +43,7 @@ export default function ProjectOverview({
       icon: "👥",
     },
     { label: "Stars", value: repoMeta.stars.toLocaleString(), icon: "⭐" },
-    { label: "Age", value: `${ageYears}y`, icon: "📅" },
+    { label: "Age", value: ageLabel, icon: "📅" },
   ];
 
   useGSAP(

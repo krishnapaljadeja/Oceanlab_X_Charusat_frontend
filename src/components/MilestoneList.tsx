@@ -18,6 +18,7 @@ export default function MilestoneList({ milestones }: MilestoneListProps) {
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
+      itemRefs.current = itemRefs.current.slice(0, milestones.length);
       itemRefs.current.forEach((el, i) => {
         if (!el) return;
         if (isScrollable) {
@@ -43,7 +44,11 @@ export default function MilestoneList({ milestones }: MilestoneListProps) {
         );
       });
     },
-    { scope: containerRef },
+    {
+      scope: containerRef,
+      dependencies: [milestones, isScrollable],
+      revertOnUpdate: true,
+    },
   );
 
   return (
@@ -85,7 +90,7 @@ export default function MilestoneList({ milestones }: MilestoneListProps) {
                 background: "#141414",
                 border: `1.5px solid ${color}33`,
                 borderLeft: `3px solid ${color}`,
-                opacity: 0,
+                opacity: isScrollable ? 1 : 0,
               }}
             >
               <div

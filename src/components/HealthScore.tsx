@@ -70,6 +70,32 @@ function computeBreakdown(summary: AnalysisSummary): BreakdownItem[] {
   ];
 }
 
+function deriveFallbackHealthScore(summary: AnalysisSummary): number {
+  const total = Math.max(1, summary.analyzedCommitCount || 0);
+  const types = summary.commitTypeBreakdown;
+
+  const feat = ((types["feat"] || 0) / total) * 100;
+  const fix = ((types["fix"] || 0) / total) * 100;
+  const test = ((types["test"] || 0) / total) * 100;
+  const docs = ((types["docs"] || 0) / total) * 100;
+
+  const contributorScore = Math.min(summary.topContributors.length * 8, 24);
+  const testingScore = Math.min(test * 1.2, 18);
+  const docsScore = Math.min(docs * 0.9, 12);
+  const maintenanceScore = Math.min((fix + feat) * 0.5, 26);
+  const releaseScore = Math.min(summary.tags.length * 0.8, 10);
+
+  const derived =
+    20 +
+    contributorScore +
+    testingScore +
+    docsScore +
+    maintenanceScore +
+    releaseScore;
+
+  return Math.max(0, Math.min(100, Math.round(derived)));
+}
+
 export default function HealthScore({ summary }: HealthScoreProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const circleRef = useRef<SVGCircleElement>(null);
@@ -77,7 +103,11 @@ export default function HealthScore({ summary }: HealthScoreProps) {
   const scoreDisplayRef = useRef<HTMLSpanElement>(null);
   const barRefs = useRef<HTMLDivElement[]>([]);
 
-  const score = summary.commitQualityScore ?? 75;
+  const rawScore = Number(summary.commitQualityScore);
+  const score =
+    Number.isFinite(rawScore) && rawScore > 0
+      ? Math.max(0, Math.min(100, Math.round(rawScore)))
+      : deriveFallbackHealthScore(summary);
   const { grade, color: gradeColor } = getGrade(score);
   const breakdown = computeBreakdown(summary);
 
