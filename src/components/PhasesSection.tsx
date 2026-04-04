@@ -319,6 +319,7 @@ export default function PhasesSection({ phases }: PhasesSectionProps) {
 
               <div className="space-y-1 mb-2">
                 {Object.entries(phase.commitTypeBreakdown)
+                  .filter(([type, count]) => type !== "unknown" && count > 0)
                   .sort(([, a], [, b]) => b - a)
                   .slice(0, 3)
                   .map(([type, count]) => (
