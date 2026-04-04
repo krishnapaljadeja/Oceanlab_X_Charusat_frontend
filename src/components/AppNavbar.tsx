@@ -35,7 +35,7 @@ export default function AppNavbar() {
       <div className="px-4 py-1.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <img
-            src="/gitstoryteller-logo-icon.svg"
+            src="/gitstoryteller-icon2.svg"
             alt="Git History Storyteller logo"
             className="h-6 w-auto"
           />
