@@ -1,56 +1,66 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { hasSupabaseConfig, supabase } from "@/lib/supabase";
-
-type AuthActionResult = {
-  error?: string;
-  needsConfirmation?: boolean;
-};
+import {
+  AuthApiResult,
+  AuthSession,
+  AuthUser,
+  establishSessionFromAccessToken,
+  getStoredSession,
+  setStoredSession,
+  signInWithBackend,
+  signOutWithBackend,
+  signUpWithBackend,
+  validateSessionWithBackend,
+} from "@/lib/auth";
 
 type AuthContextValue = {
-  session: Session | null;
-  user: User | null;
+  session: AuthSession | null;
+  user: AuthUser | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<AuthActionResult>;
-  signUp: (email: string, password: string) => Promise<AuthActionResult>;
-  signOut: () => Promise<AuthActionResult>;
+  signIn: (email: string, password: string) => Promise<AuthApiResult>;
+  signUp: (email: string, password: string) => Promise<AuthApiResult>;
+  signOut: () => Promise<AuthApiResult>;
+  useAccessToken: (accessToken: string) => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const VITE_FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL ?? "";
 
   useEffect(() => {
-    if (!hasSupabaseConfig) {
-      setLoading(false);
-      return;
-    }
-
     let active = true;
 
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (!active) return;
-      if (error) {
-        console.error("Failed to read Supabase session:", error.message);
+    async function bootstrap() {
+      const stored = getStoredSession();
+      if (!stored) {
+        if (active) {
+          setSession(null);
+          setLoading(false);
+        }
+        return;
       }
-      setSession(data.session ?? null);
-      setLoading(false);
-    });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
+      const validated = await validateSessionWithBackend(stored);
+      if (!active) return;
+
+      if (!validated) {
+        setStoredSession(null);
+        setSession(null);
+        setLoading(false);
+        return;
+      }
+
+      setStoredSession(validated);
+      setSession(validated);
       setLoading(false);
-    });
+    }
+
+    bootstrap();
 
     return () => {
       active = false;
-      subscription.unsubscribe();
     };
   }, []);
 
@@ -60,55 +70,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: session?.user ?? null,
       loading,
       signIn: async (email, password) => {
-        if (!hasSupabaseConfig) {
-          return {
-            error:
-              "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY before using auth.",
-          };
-        }
-
-        const { error } = await supabase.auth.signInWithPassword({
+        const { result, session: nextSession } = await signInWithBackend(
           email,
           password,
-        });
-        return error ? { error: error.message } : {};
+        );
+        if (nextSession) {
+          setStoredSession(nextSession);
+          setSession(nextSession);
+        }
+        return result;
       },
       signUp: async (email, password) => {
-        if (!hasSupabaseConfig) {
-          return {
-            error:
-              "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY before using auth.",
-          };
-        }
-
-        const { data, error } = await supabase.auth.signUp({
+        const { result, session: nextSession } = await signUpWithBackend(
           email,
           password,
-          options: {
-            emailRedirectTo: `${VITE_FRONTEND_URL}/login`,
-          },
-        });
-
-        if (error) {
-          return { error: error.message };
+        );
+        if (nextSession) {
+          setStoredSession(nextSession);
+          setSession(nextSession);
         }
-
-        return data.session
-          ? {}
-          : {
-              needsConfirmation: true,
-            };
+        return result;
       },
       signOut: async () => {
-        if (!hasSupabaseConfig) {
-          return {
-            error:
-              "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY before using auth.",
-          };
+        const result = await signOutWithBackend();
+        setStoredSession(null);
+        setSession(null);
+        return result;
+      },
+      useAccessToken: async (accessToken: string) => {
+        const nextSession = await establishSessionFromAccessToken(accessToken);
+        if (!nextSession) {
+          return false;
         }
-
-        const { error } = await supabase.auth.signOut();
-        return error ? { error: error.message } : {};
+        setStoredSession(nextSession);
+        setSession(nextSession);
+        return true;
       },
     }),
     [loading, session],

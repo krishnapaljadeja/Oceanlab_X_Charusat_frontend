@@ -2,7 +2,6 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ArrowRight, Lock, Mail } from "lucide-react";
-import { hasSupabaseConfig } from "@/lib/supabase";
 
 type AuthMode = "login" | "signup";
 
@@ -18,7 +17,7 @@ interface AuthPageProps {
 }
 
 export default function AuthPage({ mode }: AuthPageProps) {
-  const { session, loading, signIn, signUp } = useAuth();
+  const { session, loading, signIn, signUp, useAccessToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -37,6 +36,43 @@ export default function AuthPage({ mode }: AuthPageProps) {
       navigate(destination, { replace: true });
     }
   }, [destination, loading, navigate, session]);
+
+  useEffect(() => {
+    if (mode !== "login") return;
+
+    const params = new URLSearchParams(location.search);
+    const accessToken = params.get("access_token");
+    const verificationFailed = params.get("verification") === "failed";
+    const emailVerified = params.get("email_verified") === "true";
+
+    if (verificationFailed) {
+      setNotice("Verification link is invalid or expired.");
+      return;
+    }
+
+    if (!accessToken) {
+      if (emailVerified) {
+        setNotice("Email verified. Please sign in.");
+      }
+      return;
+    }
+
+    let active = true;
+
+    (async () => {
+      const ok = await useAccessToken(accessToken);
+      if (!active) return;
+      if (!ok) {
+        setNotice("Could not activate your session. Please sign in.");
+      } else {
+        setNotice("Email verified successfully.");
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [location.search, mode, useAccessToken]);
 
   const title = mode === "login" ? "Welcome back" : "Create account";
   const submitLabel = mode === "login" ? "Sign in" : "Sign up";
@@ -70,7 +106,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
     }
 
     if (result.needsConfirmation) {
-      setNotice("Check your email to confirm your account before signing in.");
+      setNotice("Check your email for next steps.");
       return;
     }
 
@@ -87,11 +123,6 @@ export default function AuthPage({ mode }: AuthPageProps) {
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-md items-center justify-center">
         <div className="w-full">
           <div className="mb-8">
-            {!hasSupabaseConfig && (
-              <div className="mb-4 rounded-2xl border border-[#FFD93D]/30 bg-[#FFD93D]/10 px-4 py-3 text-sm text-[#ffe58a]">
-                Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable auth.
-              </div>
-            )}
             <p className="text-sm uppercase tracking-[0.28em] text-gray-500">
               {mode === "login" ? "Sign In" : "Sign Up"}
             </p>

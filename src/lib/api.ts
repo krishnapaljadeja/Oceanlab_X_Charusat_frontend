@@ -11,22 +11,12 @@ import {
   IngestDigest,
   OnboardingGuideResponse,
 } from "./types";
-import { supabase } from "./supabase";
+import { getAuthHeaders } from "./auth";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 async function buildAuthHeaders(): Promise<Record<string, string>> {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session?.access_token) {
-    return {};
-  }
-
-  return {
-    Authorization: `Bearer ${session.access_token}`,
-  };
+  return getAuthHeaders();
 }
 
 export async function analyzeRepo(
