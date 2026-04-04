@@ -433,7 +433,6 @@ const TYPE_COLORS: Record<string, string> = {
   docs: A.yellow,
   infra: A.pink,
   deps: "#94a3b8",
-  unknown: "#3d4466",
 };
 
 function PageFooter({ repoName }: { repoName: string }) {
@@ -460,7 +459,7 @@ export default function PdfDocument({ data }: { data: AnalysisResponse }) {
   );
 
   const commitTypeEntries = Object.entries(summary.commitTypeBreakdown)
-    .filter(([, v]) => v > 0)
+    .filter(([type, v]) => type !== "unknown" && v > 0)
     .sort((a, b) => b[1] - a[1]);
 
   return (

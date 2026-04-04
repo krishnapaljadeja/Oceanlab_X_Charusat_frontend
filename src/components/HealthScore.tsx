@@ -413,6 +413,7 @@ export default function HealthScore({ summary }: HealthScoreProps) {
             </p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(summary.commitTypeBreakdown)
+                .filter(([type, count]) => type !== "unknown" && count > 0)
                 .sort(([, a], [, b]) => b - a)
                 .slice(0, 8)
                 .map(([type, count], i) => {
