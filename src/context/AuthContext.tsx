@@ -22,6 +22,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const VITE_FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL ?? "";
 
   useEffect(() => {
     if (!hasSupabaseConfig) {
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/login`,
+            emailRedirectTo: `${VITE_FRONTEND_URL}/login`,
           },
         });
 
